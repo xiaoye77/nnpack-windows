@@ -366,7 +366,7 @@ CMAKE_CACHE_MAJOR_VERSION:INTERNAL=3
 //Minor version of cmake used to create the current loaded cache
 CMAKE_CACHE_MINOR_VERSION:INTERNAL=11
 //Patch version of cmake used to create the current loaded cache
-CMAKE_CACHE_PATCH_VERSION:INTERNAL=2
+CMAKE_CACHE_PATCH_VERSION:INTERNAL=3
 //Path to CMake executable.
 CMAKE_COMMAND:INTERNAL=C:/Program Files/CMake/bin/cmake.exe
 //Path to cpack program executable.
@@ -526,7 +526,7 @@ CPUINFO_LIBRARY_TYPE-STRINGS:INTERNAL=default;static;shared
 //STRINGS property for variable: CPUINFO_RUNTIME_TYPE
 CPUINFO_RUNTIME_TYPE-STRINGS:INTERNAL=default;static;shared
 //Details about finding Git
-FIND_PACKAGE_MESSAGE_DETAILS_Git:INTERNAL=[C:/Program Files/Git/cmd/git.exe][v2.17.0.windows.1()]
+FIND_PACKAGE_MESSAGE_DETAILS_Git:INTERNAL=[C:/Program Files/Git/cmd/git.exe][v2.17.1.windows.2()]
 //Details about finding PythonInterp
 FIND_PACKAGE_MESSAGE_DETAILS_PythonInterp:INTERNAL=[C:/Program Files (x86)/Microsoft Visual Studio/Shared/Python36_64/python.exe][v3.6.5()]
 //Details about finding Threads
@@ -540,5 +540,5 @@ RUN_HAVE_STD_REGEX:INTERNAL=0
 //Result of TRY_RUN
 RUN_HAVE_STEADY_CLOCK:INTERNAL=0
 //CMAKE_INSTALL_PREFIX during last run
-_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=
+_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=C:/Program Files (x86)/cpuinfo
 
