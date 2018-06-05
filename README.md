@@ -4,7 +4,7 @@
 
 Before building this repo you have to install PeachPy.
 
-Open a Phyton command prompt with Administrator rights and type:
+Open a Python command prompt with Administrator rights and type:
   ```bash
 pip install --upgrade git+https://github.com/Maratyszcza/PeachPy
 ```
@@ -64,11 +64,12 @@ Results of the unit tests:
 ### winograd:
 
   * all passed
- 
-The AVX2 FT16x16 kernels are currently not working under Windows and are bypassed with the psimd FT16x16 kernels. This is because the PeachPy generated AVX2 FT16x16 kernels didn't pass the unit tests.
+
+The only c-interface diffrence with NNPACK is the omission of the pthreadpool parameter and using the Microsoft's concurrency primtives under Windows and a simple generic c++ threadpool implementation otherwise.
+The AVX2 FT16x16 kernels are currently non-functional under Windows and are bypassed with the psimd FT16x16 kernels. This is because the PeachPy generated AVX2 FT16x16 kernels didn't pass the unit tests.
 This only affects the Windows build. Under Linux/Mac OS/Android/iOS all kernels are passing the unit tests without having to bypass some kernels. The psimd and scalar backend are also fully Windows compatible. 
 You always can change the default AVX2 backend and exclude the files from the x86_64-fma folder from building and include the files from for example the psimd folder if you want a psimd build instead.
-Here are the steps if you want a non-Windows build like linux for example:
+Here are the steps if you want a linux build for example:
 ```bash
 sudo apt-get install ninja-build
 sudo pip install --upgrade git+https://github.com/Maratyszcza/PeachPy
