@@ -10,5 +10,6 @@ deps:
   url:  https://github.com/Maratyszcza/FP16.git
 - name: psimd
   url:  https://github.com/Maratyszcza/psimd.git
+- name: clog
 - name: googletest
 - name: googlebenchmark
