@@ -484,38 +484,38 @@ static void init_hwinfo(void) {
 		nnp_hwinfo.activations.inplace_softmax = nnp_inplace_softmax__psimd;
 		nnp_hwinfo.sdotxf = (struct sdotxf) {
 			.functions = sdotxf,
-				.fusion = NNP_COUNT_OF(sdotxf),
+			.fusion = NNP_COUNT_OF(sdotxf),
 		};
 		nnp_hwinfo.shdotxf = (struct shdotxf) {
 			.functions = shdotxf,
-				.fusion = NNP_COUNT_OF(shdotxf),
+			.fusion = NNP_COUNT_OF(shdotxf),
 		};
 #endif /* !NNP_CONVOLUTION_ONLY */
 		nnp_hwinfo.conv1x1 = (struct convolution) {
 			.mr = 4,
-				.nr = 4,
-				.only_mr_x_nr = nnp_conv1x1_only_4x4__neon,
-				.upto_mr_x_nr = nnp_conv1x1_upto_4x4__neon,
+			.nr = 4,
+			.only_mr_x_nr = nnp_conv1x1_only_4x4__neon,
+			.upto_mr_x_nr = nnp_conv1x1_upto_4x4__neon,
 		};
 		nnp_hwinfo.sgemm = (struct sgemm) {
 			.mr = 6,
-				.nr = 8,
+			.nr = 8,
 #if CPUINFO_ARCH_ARM
-				.only_mr_x_nr = nnp_sgemm_only_6x8__aarch32_neon,
+			.only_mr_x_nr = nnp_sgemm_only_6x8__aarch32_neon,
 #else
-				.only_mr_x_nr = nnp_sgemm_only_6x8__neon,
+			.only_mr_x_nr = nnp_sgemm_only_6x8__neon,
 #endif
-				.upto_mr_x_nr = nnp_sgemm_upto_6x8__neon,
+			.upto_mr_x_nr = nnp_sgemm_upto_6x8__neon,
 		};
 		nnp_hwinfo.sxgemm = (struct sxgemm) {
 			.mr = 3,
-				.nr = 3,
+			.nr = 3,
 #if CPUINFO_ARCH_ARM 
-				.only_mr_x_nr = (nnp_fast_tuple_gemm_function)nnp_s4gemm_only_3x3__aarch32_neon,
+			.only_mr_x_nr = (nnp_fast_tuple_gemm_function)nnp_s4gemm_only_3x3__aarch32_neon,
 #else
-				.only_mr_x_nr = (nnp_fast_tuple_gemm_function)nnp_s4gemm_only_3x3__neon,
+			.only_mr_x_nr = (nnp_fast_tuple_gemm_function)nnp_s4gemm_only_3x3__neon,
 #endif
-				.upto_mr_x_nr = (nnp_full_tuple_gemm_function)nnp_s4gemm_upto_3x3__neon,
+			.upto_mr_x_nr = (nnp_full_tuple_gemm_function)nnp_s4gemm_upto_3x3__neon,
 		};
 #if CPUINFO_ARCH_ARM 
 		if (cpuinfo_has_arm_neon_fma()) {
@@ -531,12 +531,21 @@ static void init_hwinfo(void) {
 			};
 		}
 #if CPUINFO_ARCH_ARM 
-		if (cpuinfo_has_arm_fp16_arith()) {
-			nnp_hwinfo.hxgemm.only_mr_x_nr = (nnp_fast_tuple_gemm_function)nnp_h4gemm_only_3x3__aarch32_neonhparith;
-		} else if (cpuinfo_has_arm_neon_fma()) {
-			nnp_hwinfo.hxgemm.only_mr_x_nr = (nnp_fast_tuple_gemm_function)nnp_h4gemm_only_3x3__aarch32_neon2;
-		} else if (cpuinfo_has_arm_neon_fp16()) {
-			nnp_hwinfo.hxgemm.only_mr_x_nr = (nnp_fast_tuple_gemm_function)nnp_h4gemm_only_3x3__aarch32_neonhp;
+		if (cpuinfo_has_arm_neon_fp16_arith()) {
+			nnp_hwinfo.hxgemm.only_mr_x_nr =
+				(nnp_fast_tuple_gemm_function)nnp_h4gemm_only_3x3__aarch32_neonhparith;
+			nnp_hwinfo.hxgemm.upto_mr_x_nr =
+				(nnp_full_tuple_gemm_function)nnp_h4gemm_upto_3x3__aarch32_neon2;
+		}
+		else if (cpuinfo_has_arm_neon_fma()) {
+			nnp_hwinfo.hxgemm.only_mr_x_nr =
+				(nnp_fast_tuple_gemm_function)nnp_h4gemm_only_3x3__aarch32_neon2;
+			nnp_hwinfo.hxgemm.upto_mr_x_nr =
+				(nnp_full_tuple_gemm_function)nnp_h4gemm_upto_3x3__aarch32_neon2;
+		}
+		else if (cpuinfo_has_arm_neon_fp16()) {
+			nnp_hwinfo.hxgemm.only_mr_x_nr =
+				(nnp_fast_tuple_gemm_function)nnp_h4gemm_only_3x3__aarch32_neonhp;
 		}
 #endif 
 		nnp_hwinfo.cxgemm = (struct cxgemm) {

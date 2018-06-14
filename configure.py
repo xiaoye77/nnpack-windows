@@ -291,7 +291,7 @@ def main(args):
         build.static_library("nnpack", nnpack_objects)
 
     # Build tests for micro-kernels. Link to the micro-kernels implementations
-    with build.options(source_dir="test", extra_include_dirs="test", deps={(build.deps.googletest, build.deps.cpuinfo, build.deps.clog, build.deps.fp16) : any, "log": build.target.is_android}): 
+    with build.options(source_dir="test", extra_include_dirs="test", deps={(build.deps.googletest, build.deps.cpuinfo, build.deps.clog, build.deps.fp16) : any,"log": build.target.is_android}): 
         build.unittest("fourier-reference-test",
             reference_fft_objects + [build.cxx("fourier/reference.cc")])
 
@@ -437,7 +437,7 @@ def main(args):
     # Build benchmarking utilities
     if not options.inference_only:
         with build.options(source_dir="bench", extra_include_dirs="bench", macros=macros, deps={
-                (build, build.deps.cpuinfo): all,
+                (build, build.deps.cpuinfo, build.deps.clog): all,
                 "rt": build.target.is_linux,
                 "log": build.target.is_android}): 
 
