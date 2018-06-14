@@ -2,7 +2,7 @@
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)
-  set(CMAKE_INSTALL_PREFIX "C:/Program Files (x86)/cpuinfo")
+  set(CMAKE_INSTALL_PREFIX "C:/Program Files/cpuinfo")
 endif()
 string(REGEX REPLACE "/$" "" CMAKE_INSTALL_PREFIX "${CMAKE_INSTALL_PREFIX}")
 
@@ -50,8 +50,7 @@ endif()
 
 if(NOT CMAKE_INSTALL_LOCAL_ONLY)
   # Include the install script for each subdirectory.
-  include("C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps/googlebenchmark/cmake_install.cmake")
-  include("C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps/googletest/cmake_install.cmake")
+  include("C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps/clog/cmake_install.cmake")
 
 endif()
 

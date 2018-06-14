@@ -164,6 +164,10 @@ enum cpuinfo_vendor {
 	cpuinfo_vendor_via      = 11,
 	/** Cavium, Inc. Vendor of ARM64 processor microarchitectures. */
 	cpuinfo_vendor_cavium   = 12,
+	/** Broadcom, Inc. Vendor of ARM processor microarchitectures. */
+	cpuinfo_vendor_broadcom = 13,
+	/** Applied Micro Circuits Corporation (APM). Vendor of ARM64 processor microarchitectures. */
+	cpuinfo_vendor_apm      = 14,
 
 	/* Active vendors of embedded CPUs */
 
@@ -382,9 +386,15 @@ enum cpuinfo_uarch {
 	cpuinfo_uarch_krait    = 0x00400101,
 	/** Qualcomm Kryo. */
 	cpuinfo_uarch_kryo     = 0x00400102,
+	/** Qualcomm Falkor. */
+	cpuinfo_uarch_falkor   = 0x00400103,
+	/** Qualcomm Saphira. */
+	cpuinfo_uarch_saphira  = 0x00400104,
 
 	/** Nvidia Denver. */
 	cpuinfo_uarch_denver   = 0x00500100,
+	/** Nvidia Denver 2. */
+	cpuinfo_uarch_denver2  = 0x00500101,
 
 	/** Samsung Mongoose M1 (Exynos 8890 big cores). */
 	cpuinfo_uarch_mongoose_m1 = 0x00600100,
@@ -410,9 +420,19 @@ enum cpuinfo_uarch {
 
 	/** Cavium ThunderX. */
 	cpuinfo_uarch_thunderx = 0x00800100,
+	/** Cavium ThunderX2 (originally Broadcom Vulkan). */
+	cpuinfo_uarch_thunderx2 = 0x00800200,
 
 	/** Marvell PJ4. */
 	cpuinfo_uarch_pj4 = 0x00900100,
+
+	/** Broadcom Brahma B15. */
+	cpuinfo_uarch_brahma_b15 = 0x00A00100,
+	/** Broadcom Brahma B53. */
+	cpuinfo_uarch_brahma_b53 = 0x00A00101,
+
+	/** Applied Micro X-Gene. */
+	cpuinfo_uarch_xgene = 0x00B00100,
 };
 
 struct cpuinfo_processor {
@@ -1535,6 +1555,16 @@ static inline bool cpuinfo_has_arm_atomics(void) {
 static inline bool cpuinfo_has_arm_neon_rdm(void) {
 	#if CPUINFO_ARCH_ARM || CPUINFO_ARCH_ARM64
 		return cpuinfo_isa.rdm;
+	#else
+		return false;
+	#endif
+}
+
+static inline bool cpuinfo_has_arm_neon_fp16_arith(void) {
+	#if CPUINFO_ARCH_ARM
+		return cpuinfo_isa.neon && cpuinfo_isa.fp16arith;
+	#elif CPUINFO_ARCH_ARM64
+		return cpuinfo_isa.fp16arith;
 	#else
 		return false;
 	#endif

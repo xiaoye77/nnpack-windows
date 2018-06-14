@@ -372,6 +372,42 @@ TEST(QUALCOMM, snapdragon_630) {
 	EXPECT_EQ(0, little_l3.size);
 }
 
+TEST(QUALCOMM, snapdragon_636) {
+	const struct cpuinfo_arm_chipset chipset = {
+		.vendor = cpuinfo_arm_chipset_vendor_qualcomm,
+		.series = cpuinfo_arm_chipset_series_qualcomm_snapdragon,
+		.model = 636,
+	};
+
+	struct cpuinfo_cache big_l1i = { 0 };
+	struct cpuinfo_cache big_l1d = { 0 };
+	struct cpuinfo_cache big_l2 = { 0 };
+	struct cpuinfo_cache big_l3 = { 0 };
+	cpuinfo_arm_decode_cache(
+		cpuinfo_uarch_cortex_a73, 4, UINT32_C(0x51AF8002),
+		&chipset, 0, 8,
+		&big_l1i, &big_l1d, &big_l2, &big_l3);
+
+	struct cpuinfo_cache little_l1i = { 0 };
+	struct cpuinfo_cache little_l1d = { 0 };
+	struct cpuinfo_cache little_l2 = { 0 };
+	struct cpuinfo_cache little_l3 = { 0 };
+	cpuinfo_arm_decode_cache(
+		cpuinfo_uarch_cortex_a53, 4, UINT32_C(0x51AF8014),
+		&chipset, 1, 8,
+		&little_l1i, &little_l1d, &little_l2, &little_l3);
+
+	EXPECT_EQ(64 * 1024, big_l1i.size);
+	EXPECT_EQ(64 * 1024, big_l1d.size);
+	EXPECT_EQ(1024 * 1024, big_l2.size);
+	EXPECT_EQ(0, big_l3.size);
+
+	EXPECT_EQ(32 * 1024, little_l1i.size);
+	EXPECT_EQ(32 * 1024, little_l1d.size);
+	EXPECT_EQ(1024 * 1024, little_l2.size);
+	EXPECT_EQ(0, little_l3.size);
+}
+
 TEST(QUALCOMM, snapdragon_650) {
 	const struct cpuinfo_arm_chipset chipset = {
 		.vendor = cpuinfo_arm_chipset_vendor_qualcomm,
@@ -517,7 +553,7 @@ TEST(QUALCOMM, snapdragon_660) {
 
 	EXPECT_EQ(32 * 1024, little_l1i.size);
 	EXPECT_EQ(32 * 1024, little_l1d.size);
-	EXPECT_EQ(512 * 1024, little_l2.size);
+	EXPECT_EQ(1024 * 1024, little_l2.size);
 	EXPECT_EQ(0, little_l3.size);
 }
 
@@ -882,6 +918,81 @@ TEST(SAMSUNG, exynos_9810) {
 	EXPECT_EQ(64 * 1024, big_l1d.size);
 	EXPECT_EQ(512 * 1024, big_l2.size);
 	EXPECT_EQ(4 * 1024 * 1024, big_l3.size);
+
+	EXPECT_EQ(32 * 1024, little_l1i.size);
+	EXPECT_EQ(32 * 1024, little_l1d.size);
+	EXPECT_EQ(512 * 1024, little_l2.size);
+	EXPECT_EQ(0, little_l3.size);
+}
+
+TEST(MEDIATEK, mediatek_mt8173) {
+	const struct cpuinfo_arm_chipset chipset = {
+		.vendor = cpuinfo_arm_chipset_vendor_mediatek,
+		.series = cpuinfo_arm_chipset_series_mediatek_mt,
+		.model = 8173,
+	};
+
+	struct cpuinfo_cache big_l1i = { 0 };
+	struct cpuinfo_cache big_l1d = { 0 };
+	struct cpuinfo_cache big_l2 = { 0 };
+	struct cpuinfo_cache big_l3 = { 0 };
+	cpuinfo_arm_decode_cache(
+		cpuinfo_uarch_cortex_a72, 2, UINT32_C(0x410FD080),
+		&chipset, 0, 4,
+		&big_l1i, &big_l1d, &big_l2, &big_l3);
+
+	struct cpuinfo_cache little_l1i = { 0 };
+	struct cpuinfo_cache little_l1d = { 0 };
+	struct cpuinfo_cache little_l2 = { 0 };
+	struct cpuinfo_cache little_l3 = { 0 };
+	cpuinfo_arm_decode_cache(
+		cpuinfo_uarch_cortex_a53, 2, UINT32_C(0x410FD032),
+		&chipset, 1, 4,
+		&little_l1i, &little_l1d, &little_l2, &little_l3);
+
+	EXPECT_EQ(48 * 1024, big_l1i.size);
+	EXPECT_EQ(32 * 1024, big_l1d.size);
+	EXPECT_EQ(1024 * 1024, big_l2.size);
+	EXPECT_EQ(0, big_l3.size);
+
+	EXPECT_EQ(32 * 1024, little_l1i.size);
+	EXPECT_EQ(32 * 1024, little_l1d.size);
+	EXPECT_EQ(512 * 1024, little_l2.size);
+	EXPECT_EQ(0, little_l3.size);
+}
+
+TEST(MEDIATEK, mediatek_mt8173c) {
+	const struct cpuinfo_arm_chipset chipset = {
+		.vendor = cpuinfo_arm_chipset_vendor_mediatek,
+		.series = cpuinfo_arm_chipset_series_mediatek_mt,
+		.model = 8173,
+		.suffix = {
+			[0] = 'C',
+		},
+	};
+
+	struct cpuinfo_cache big_l1i = { 0 };
+	struct cpuinfo_cache big_l1d = { 0 };
+	struct cpuinfo_cache big_l2 = { 0 };
+	struct cpuinfo_cache big_l3 = { 0 };
+	cpuinfo_arm_decode_cache(
+		cpuinfo_uarch_cortex_a72, 2, UINT32_C(0x410FD080),
+		&chipset, 0, 4,
+		&big_l1i, &big_l1d, &big_l2, &big_l3);
+
+	struct cpuinfo_cache little_l1i = { 0 };
+	struct cpuinfo_cache little_l1d = { 0 };
+	struct cpuinfo_cache little_l2 = { 0 };
+	struct cpuinfo_cache little_l3 = { 0 };
+	cpuinfo_arm_decode_cache(
+		cpuinfo_uarch_cortex_a53, 2, UINT32_C(0x410FD032),
+		&chipset, 1, 4,
+		&little_l1i, &little_l1d, &little_l2, &little_l3);
+
+	EXPECT_EQ(48 * 1024, big_l1i.size);
+	EXPECT_EQ(32 * 1024, big_l1d.size);
+	EXPECT_EQ(1024 * 1024, big_l2.size);
+	EXPECT_EQ(0, big_l3.size);
 
 	EXPECT_EQ(32 * 1024, little_l1i.size);
 	EXPECT_EQ(32 * 1024, little_l1d.size);
@@ -1462,4 +1573,40 @@ TEST(NVIDIA, tegra_t210) {
 	EXPECT_EQ(32 * 1024, l1d.size);
 	EXPECT_EQ(2 * 1024 * 1024, l2.size);
 	EXPECT_EQ(0, l3.size);
+}
+
+TEST(ROCKCHIP, rk3368) {
+	const struct cpuinfo_arm_chipset chipset = {
+		.vendor = cpuinfo_arm_chipset_vendor_rockchip,
+		.series = cpuinfo_arm_chipset_series_rockchip_rk,
+		.model = 3368,
+	};
+
+	struct cpuinfo_cache big_l1i = { 0 };
+	struct cpuinfo_cache big_l1d = { 0 };
+	struct cpuinfo_cache big_l2 = { 0 };
+	struct cpuinfo_cache big_l3 = { 0 };
+	cpuinfo_arm_decode_cache(
+		cpuinfo_uarch_cortex_a53, 4, UINT32_C(0x410FD033),
+		&chipset, 0, 8,
+		&big_l1i, &big_l1d, &big_l2, &big_l3);
+
+	struct cpuinfo_cache little_l1i = { 0 };
+	struct cpuinfo_cache little_l1d = { 0 };
+	struct cpuinfo_cache little_l2 = { 0 };
+	struct cpuinfo_cache little_l3 = { 0 };
+	cpuinfo_arm_decode_cache(
+		cpuinfo_uarch_cortex_a53, 4, UINT32_C(0x410FD033),
+		&chipset, 1, 8,
+		&little_l1i, &little_l1d, &little_l2, &little_l3);
+
+	EXPECT_EQ(32 * 1024, big_l1i.size);
+	EXPECT_EQ(32 * 1024, big_l1d.size);
+	EXPECT_EQ(512 * 1024, big_l2.size);
+	EXPECT_EQ(0, big_l3.size);
+
+	EXPECT_EQ(32 * 1024, little_l1i.size);
+	EXPECT_EQ(32 * 1024, little_l1d.size);
+	EXPECT_EQ(256 * 1024, little_l2.size);
+	EXPECT_EQ(0, little_l3.size);
 }

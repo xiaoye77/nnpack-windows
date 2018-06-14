@@ -7,9 +7,6 @@
     <ClCompile Include="C:\Users\dhaen\Source\Repos\nnpack-windows\cpuinfo\src\api.c">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="C:\Users\dhaen\Source\Repos\nnpack-windows\cpuinfo\src\log.c">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="C:\Users\dhaen\Source\Repos\nnpack-windows\cpuinfo\src\x86\init.c">
       <Filter>Source Files</Filter>
     </ClCompile>

@@ -489,7 +489,12 @@ void cpuinfo_arm_decode_cache(
 			 *  | Broadcom BCM2837   |   4   |    16K    |    16K    |    512K   |    [1]    |
 			 *  | Exynos 7420        | 4(+4) |    32K    |    32K    |    256K   |  [2, 3]   |
 			 *  | Exynos 8890        | 4(+4) |    32K    |    32K    |    256K   |    [4]    |
+			 *  | Rochchip RK3368    |  4+4  |    32K    |    32K    | 512K+256K |   sysfs   |
+			 *  | MediaTek MT8173C   | 2(+2) |    32K    |    32K    | 512K(+1M) |   sysfs   |
 			 *  | Snapdragon 410     |   4   |    32K    |    32K    |    512K   |    [3]    |
+			 *  | Snapdragon 630     |  4+4  |    32K    |    32K    |  1M+512K  |   sysfs   |
+			 *  | Snapdragon 636     | 4(+4) |  32K+64K  |  32K+64K  |   1M+1M   |   sysfs   |
+			 *  | Snapdragon 660     | 4(+4) |  32K+64K  |  32K+64K  |   1M+1M   |   sysfs   |
 			 *  | Snapdragon 835     | 4(+4) |  32K+64K  |  32K+64K  |  1M(+2M)  |   sysfs   |
 			 *  | Kirin 620          |  4+4  |    32K    |    32K    |    512K   |    [5]    |
 			 *  +--------------------+-------+-----------+-----------+-----------+-----------+
@@ -504,12 +509,33 @@ void cpuinfo_arm_decode_cache(
 				/* Qualcomm-modified Cortex-A53 in Snapdragon 630/660/835 */
 
 				uint32_t l2_size = 512 * 1024;
-				if (chipset->series == cpuinfo_arm_chipset_series_qualcomm_msm && chipset->model == 8998) {
-					/* Snapdragon 835 (MSM8998): 1 MB L2 (little cores only) */
-					l2_size = 1024 * 1024;
-				} else if (chipset->series == cpuinfo_arm_chipset_series_qualcomm_snapdragon && chipset->model == 630 && cluster_id == 0) {
-					/* Snapdragon 630 (MSM8998): 1 MB L2 for the big cores */
-					l2_size = 1024 * 1024;
+				switch (chipset->series) {
+					case cpuinfo_arm_chipset_series_qualcomm_msm:
+						if (chipset->model == 8998) {
+							/* Snapdragon 835 (MSM8998): 1 MB L2 (little cores only) */
+							l2_size = 1024 * 1024;
+						}
+						break;
+					case cpuinfo_arm_chipset_series_qualcomm_snapdragon:
+						switch (chipset->model) {
+							case 630:
+								if (cluster_id == 0) {
+									/* Snapdragon 630: 1 MB L2 for the big cores */
+									l2_size = 1024 * 1024;
+								}
+								break;
+							case 636:
+								/* Snapdragon 636: 1 MB L2 (little cores only) */
+								l2_size = 1024 * 1024;
+								break;
+							case 660:
+								/* Snapdragon 660: 1 MB L2 (little cores only) */
+								l2_size = 1024 * 1024;
+								break;
+						}
+						break;
+					default:
+						break;
 				}
 
 				*l1i = (struct cpuinfo_cache) {
@@ -584,6 +610,25 @@ void cpuinfo_arm_decode_cache(
 								break;
 						}
 						break;
+					case cpuinfo_arm_chipset_series_mediatek_mt:
+						switch (chipset->model) {
+							case 8173:
+								l1_size = 32 * 1024;
+								l2_size = 512 * 1024;
+								break;
+						}
+						break;
+					case cpuinfo_arm_chipset_series_rockchip_rk:
+						l1_size = 32 * 1024;
+						switch (chipset->model) {
+							case 3368:
+								if (cluster_id == 0) {
+									 /* RK3368: 512 KB L2 for the big cores */
+									l2_size = 512 * 1024;
+								}
+								break;
+						}
+						break;
 					case cpuinfo_arm_chipset_series_samsung_exynos:
 						l1_size = 32 * 1024;
 						break;
@@ -647,7 +692,18 @@ void cpuinfo_arm_decode_cache(
 			 * [2] https://www.anandtech.com/show/12478/exynos-9810-handson-awkward-first-results
 			 */
 			if (midr_is_qualcomm_cortex_a55_silver(midr)) {
-				/* Qualcomm-modified Cortex-A55 in Snapdragon 845 */
+				/* Qualcomm-modified Cortex-A55 in Snapdragon 710 / 845 */
+				uint32_t l3_size = 1024 * 1024;
+				switch (chipset->series) {
+					case cpuinfo_arm_chipset_series_qualcomm_snapdragon:
+						/* Snapdragon 845: 2M L3 cache */
+						if (chipset->model == 845) {
+							l3_size = 2 * 1024 * 1024;
+						}
+						break;
+					default:
+						break;
+				}
 
 				*l1i = (struct cpuinfo_cache) {
 					.size = 32 * 1024,
@@ -665,7 +721,7 @@ void cpuinfo_arm_decode_cache(
 					.line_size = 64
 				};
 				*l3 = (struct cpuinfo_cache) {
-					.size = 2 * 1024 * 1024,
+					.size = l3_size,
 					.associativity = 16,
 					.line_size = 64
 				};
@@ -770,6 +826,7 @@ void cpuinfo_arm_decode_cache(
 			 *  | Snapdragon 653      |  4(+4)  | 32K(+32K) | 48K(+32K) |  1M(+512K) |    [3]    |
 			 *  | HiSilicon Kirin 950 |  4(+4)  |  32K+32K  |  48K+32K  |     ?      |           |
 			 *  | HiSilicon Kirin 955 |  4(+4)  |  32K+32K  |  48K+32K  |     ?      |           |
+			 *  | MediaTek MT8173C    |  2(+2)  | 32K(+32K) | 48K(+32K) |  1M(+512K) |   sysfs   |
 			 *  | MediaTek Helio X20  | 2(+4+4) |     ?     |     ?     |     ?      |           |
 			 *  | MediaTek Helio X23  | 2(+4+4) |     ?     |     ?     |     ?      |           |
 			 *  | MediaTek Helio X25  | 2(+4+4) |     ?     |     ?     |     ?      |           |
@@ -840,10 +897,11 @@ void cpuinfo_arm_decode_cache(
 			 *  +---------------------+---------+-----------+-----------+-----------+-----------+
 			 *  | Processor model     | Cores   | L1D cache | L1I cache | L2 cache  | Reference |
 			 *  +---------------------+---------+-----------+-----------+-----------+-----------+
-			 *  | HiSilicon Kirin 960 | 4(+4)   |  64K+32K  |  64K+32K  |     ?     |    [2]    |
+			 *  | HiSilicon Kirin 960 |  4(+4)  |  64K+32K  |  64K+32K  |     ?     |    [2]    |
 			 *  | MediaTek Helio X30  | 2(+4+4) |     ?     |  64K+ ?   |     ?     |           |
-			 *  | Snapdragon 835      | 4(+4)   |  64K+32K  |  64K+32K  |  2M(+1M)  |   sysfs   |
-			 *  | Snapdragon 660      | 4(+4)   |  64K+32K  |  64K+32K  |  2M(+1M)  |    [3]    |
+			 *  | Snapdragon 636      |  4(+4)  | 64K(+32K) | 64K(+32K) |  1M(+1M)  |   sysfs   |
+			 *  | Snapdragon 660      |  4(+4)  |  64K+32K  |  64K+32K  |  1M(+1M)  |    [3]    |
+			 *  | Snapdragon 835      |  4(+4)  |  64K+32K  |  64K+32K  |  2M(+1M)  |   sysfs   |
 			 *  +---------------------+---------+-----------+-----------+-----------+-----------+
 			 *
 			 * [1] http://www.anandtech.com/show/10347/arm-cortex-a73-artemis-unveiled/2
@@ -923,6 +981,17 @@ void cpuinfo_arm_decode_cache(
 			 *
 			 * [1] https://www.anandtech.com/show/12114/qualcomm-announces-snapdragon-845-soc
 			 */
+			uint32_t l3_size = 1024 * 1024;
+			switch (chipset->series) {
+				case cpuinfo_arm_chipset_series_qualcomm_snapdragon:
+					/* Snapdragon 845: 2M L3 cache */
+					if (chipset->model == 845) {
+						l3_size = 2 * 1024 * 1024;
+					}
+					break;
+				default:
+					break;
+			}
 			*l1i = (struct cpuinfo_cache) {
 				.size = 64 * 1024,
 				.associativity = 4,
@@ -939,7 +1008,7 @@ void cpuinfo_arm_decode_cache(
 				.line_size = 64
 			};
 			*l3 = (struct cpuinfo_cache) {
-				.size = 2 * 1024 * 1024,
+				.size = l3_size,
 				.associativity = 16,
 				.line_size = 64
 			};
@@ -1046,6 +1115,7 @@ void cpuinfo_arm_decode_cache(
 			}
 			break;
 		case cpuinfo_uarch_denver:
+		case cpuinfo_uarch_denver2:
 			/*
 			 * The Denver chip includes a 128KB, 4-way level 1 instruction cache, a 64KB, 4-way level 2 data cache,
 			 * and a 2MB, 16-way level 2 cache, all of which can service both cores. [1]

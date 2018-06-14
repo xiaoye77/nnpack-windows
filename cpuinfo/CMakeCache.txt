@@ -27,7 +27,7 @@ BENCHMARK_ENABLE_LTO:BOOL=OFF
 BENCHMARK_ENABLE_TESTING:BOOL=OFF
 
 //Build and test using libc++ as the standard library.
-BENCHMARK_USE_LIBCXX:BOOL=OFF
+BENCHMARK_USE_LIBCXX:BOOL=ON
 
 //Builds the googlemock subproject
 BUILD_GMOCK:BOOL=ON
@@ -37,6 +37,14 @@ BUILD_GTEST:BOOL=OFF
 
 //Build shared libraries (DLLs).
 BUILD_SHARED_LIBS:BOOL=OFF
+
+//Build clog tests
+CLOG_BUILD_TESTS:BOOL=OFF
+
+//Log errors, warnings, and information to stdout/stderr
+CLOG_LOG_TO_STDIO:BOOL=OFF
+
+CLOG_RUNTIME_TYPE:STRING=static
 
 //Semicolon separated list of supported configuration types, only
 // supports Debug, Release, MinSizeRel, and RelWithDebInfo, anything
@@ -80,7 +88,7 @@ CMAKE_C_FLAGS_RELWITHDEBINFO:STRING=/MD /Zi /O2 /Ob1 /DNDEBUG
 CMAKE_C_STANDARD_LIBRARIES:STRING=kernel32.lib user32.lib gdi32.lib winspool.lib shell32.lib ole32.lib oleaut32.lib uuid.lib comdlg32.lib advapi32.lib
 
 //Flags used by the linker during all build types.
-CMAKE_EXE_LINKER_FLAGS:STRING=/machine:X86
+CMAKE_EXE_LINKER_FLAGS:STRING=/machine:x64
 
 //Flags used by the linker during DEBUG builds.
 CMAKE_EXE_LINKER_FLAGS_DEBUG:STRING=/debug /INCREMENTAL
@@ -131,7 +139,7 @@ CMAKE_INSTALL_MANDIR:PATH=
 CMAKE_INSTALL_OLDINCLUDEDIR:PATH=/usr/include
 
 //Install path prefix, prepended onto install directories.
-CMAKE_INSTALL_PREFIX:PATH=C:/Program Files (x86)/cpuinfo
+CMAKE_INSTALL_PREFIX:PATH=C:/Program Files/cpuinfo
 
 //Run-time variable data (LOCALSTATEDIR/run)
 CMAKE_INSTALL_RUNSTATEDIR:PATH=
@@ -146,11 +154,11 @@ CMAKE_INSTALL_SHAREDSTATEDIR:PATH=com
 CMAKE_INSTALL_SYSCONFDIR:PATH=etc
 
 //Path to a program.
-CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.14.26428/bin/Hostx86/x86/link.exe
+CMAKE_LINKER:FILEPATH=C:/Program Files (x86)/Microsoft Visual Studio/2017/Community/VC/Tools/MSVC/14.14.26428/bin/Hostx86/x64/link.exe
 
 //Flags used by the linker during the creation of modules during
 // all build types.
-CMAKE_MODULE_LINKER_FLAGS:STRING=/machine:X86
+CMAKE_MODULE_LINKER_FLAGS:STRING=/machine:x64
 
 //Flags used by the linker during the creation of modules during
 // DEBUG builds.
@@ -172,7 +180,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 CMAKE_PROJECT_NAME:STATIC=cpuinfo
 
 //RC compiler
-CMAKE_RC_COMPILER:FILEPATH=C:/Program Files (x86)/Windows Kits/10/bin/10.0.17134.0/x86/rc.exe
+CMAKE_RC_COMPILER:FILEPATH=rc
 
 //Flags for Windows Resource Compiler during all build types.
 CMAKE_RC_FLAGS:STRING=/DWIN32
@@ -191,7 +199,7 @@ CMAKE_RC_FLAGS_RELWITHDEBINFO:STRING=
 
 //Flags used by the linker during the creation of shared libraries
 // during all build types.
-CMAKE_SHARED_LINKER_FLAGS:STRING=/machine:X86
+CMAKE_SHARED_LINKER_FLAGS:STRING=/machine:x64
 
 //Flags used by the linker during the creation of shared libraries
 // during DEBUG builds.
@@ -211,14 +219,14 @@ CMAKE_SHARED_LINKER_FLAGS_RELWITHDEBINFO:STRING=/debug /INCREMENTAL
 
 //If set, runtime paths are not added when installing shared libraries,
 // but are added when building.
-CMAKE_SKIP_INSTALL_RPATH:BOOL=NO
+CMAKE_SKIP_INSTALL_RPATH:BOOL=OFF
 
 //If set, runtime paths are not added when using shared libraries.
-CMAKE_SKIP_RPATH:BOOL=NO
+CMAKE_SKIP_RPATH:BOOL=OFF
 
 //Flags used by the linker during the creation of static libraries
 // during all build types.
-CMAKE_STATIC_LINKER_FLAGS:STRING=/machine:X86
+CMAKE_STATIC_LINKER_FLAGS:STRING=/machine:x64
 
 //Flags used by the linker during the creation of static libraries
 // during DEBUG builds.
@@ -240,7 +248,7 @@ CMAKE_STATIC_LINKER_FLAGS_RELWITHDEBINFO:STRING=
 // .SILENT directive, and all commands will be echoed to the console
 // during the make.  This is useful for debugging only. With Visual
 // Studio IDE projects all commands are done without /nologo.
-CMAKE_VERBOSE_MAKEFILE:BOOL=FALSE
+CMAKE_VERBOSE_MAKEFILE:BOOL=OFF
 
 //Confu-style dependencies binary directory
 CONFU_DEPENDENCIES_BINARY_DIR:PATH=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps
@@ -249,25 +257,22 @@ CONFU_DEPENDENCIES_BINARY_DIR:PATH=C:/Users/dhaen/Source/Repos/nnpack-windows/cp
 CONFU_DEPENDENCIES_SOURCE_DIR:PATH=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps
 
 //Build cpuinfo micro-benchmarks
-CPUINFO_BUILD_BENCHMARKS:BOOL=ON
+CPUINFO_BUILD_BENCHMARKS:BOOL=OFF
 
 //Build cpuinfo mock tests
-CPUINFO_BUILD_MOCK_TESTS:BOOL=ON
+CPUINFO_BUILD_MOCK_TESTS:BOOL=OFF
 
 //Build command-line tools
 CPUINFO_BUILD_TOOLS:BOOL=ON
 
 //Build cpuinfo unit tests
-CPUINFO_BUILD_UNIT_TESTS:BOOL=ON
+CPUINFO_BUILD_UNIT_TESTS:BOOL=OFF
 
 //Type of cpuinfo library (shared, static, or default) to build
-CPUINFO_LIBRARY_TYPE:STRING=default
-
-//Log errors, warnings, and information to stdout/stderr
-CPUINFO_LOG_TO_STDIO:BOOL=ON
+CPUINFO_LIBRARY_TYPE:STRING=static
 
 //Type of runtime library (shared, static, or default) to use
-CPUINFO_RUNTIME_TYPE:STRING=default
+CPUINFO_RUNTIME_TYPE:STRING=static
 
 //Git command line client
 GIT_EXECUTABLE:FILEPATH=C:/Program Files/Git/cmd/git.exe
@@ -294,16 +299,25 @@ benchmark_LIB_DEPENDS:STATIC=general;Shlwapi;
 benchmark_SOURCE_DIR:STATIC=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps/googlebenchmark
 
 //Value Computed by CMake
-cpuinfo_BINARY_DIR:STATIC=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo
+clog_BINARY_DIR:STATIC=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps/clog
 
 //Dependencies for target
-cpuinfo_LIB_DEPENDS:STATIC=
+clog_LIB_DEPENDS:STATIC=
+
+//Value Computed by CMake
+clog_SOURCE_DIR:STATIC=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps/clog
+
+//Value Computed by CMake
+cpuinfo_BINARY_DIR:STATIC=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo
+
+//Dependencies for the target
+cpuinfo_LIB_DEPENDS:STATIC=general;clog;
 
 //Value Computed by CMake
 cpuinfo_SOURCE_DIR:STATIC=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo
 
-//Dependencies for target
-cpuinfo_mock_LIB_DEPENDS:STATIC=
+//Dependencies for the target
+cpuinfo_mock_LIB_DEPENDS:STATIC=general;clog;
 
 //Value Computed by CMake
 gmock_BINARY_DIR:STATIC=C:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo/deps/googletest/googlemock
@@ -359,6 +373,8 @@ gtest_main_LIB_DEPENDS:STATIC=general;gtest;
 # INTERNAL cache entries
 ########################
 
+//STRINGS property for variable: CLOG_RUNTIME_TYPE
+CLOG_RUNTIME_TYPE-STRINGS:INTERNAL=default;static;shared
 //This is the directory where this CMakeCache.txt was created
 CMAKE_CACHEFILE_DIR:INTERNAL=c:/Users/dhaen/Source/Repos/nnpack-windows/cpuinfo
 //Major version of cmake used to create the current loaded cache
@@ -412,7 +428,7 @@ CMAKE_EXE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //Name of external makefile project generator.
 CMAKE_EXTRA_GENERATOR:INTERNAL=
 //Name of generator.
-CMAKE_GENERATOR:INTERNAL=Visual Studio 15 2017
+CMAKE_GENERATOR:INTERNAL=Visual Studio 15 2017 Win64
 //Generator instance identifier.
 CMAKE_GENERATOR_INSTANCE:INTERNAL=C:/Program Files (x86)/Microsoft Visual Studio/2017/Community
 //Name of generator platform.
@@ -469,7 +485,7 @@ CMAKE_MODULE_LINKER_FLAGS_RELEASE-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO
 CMAKE_MODULE_LINKER_FLAGS_RELWITHDEBINFO-ADVANCED:INTERNAL=1
 //number of local generators
-CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=6
+CMAKE_NUMBER_OF_MAKEFILES:INTERNAL=2
 //Platform information initialized
 CMAKE_PLATFORM_INFO_INITIALIZED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_RC_COMPILER
@@ -540,5 +556,5 @@ RUN_HAVE_STD_REGEX:INTERNAL=0
 //Result of TRY_RUN
 RUN_HAVE_STEADY_CLOCK:INTERNAL=0
 //CMAKE_INSTALL_PREFIX during last run
-_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=C:/Program Files (x86)/cpuinfo
+_GNUInstallDirs_LAST_CMAKE_INSTALL_PREFIX:INTERNAL=C:/Program Files/cpuinfo
 
