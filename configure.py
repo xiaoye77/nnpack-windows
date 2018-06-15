@@ -335,7 +335,7 @@ def main(args):
 
     # Build test for layers. Link to the library.
     with build.options(source_dir="test", include_dirs="test", deps={
-                (build, build.deps.pthreadpool, build.deps.cpuinfo, build.deps.clog, build.deps.googletest.core, build.deps.fp16): any,
+                (build, build.deps.cpuinfo, build.deps.clog, build.deps.googletest.core, build.deps.fp16): any,
                 "rt": build.target.is_linux, 
                 "log": build.target.is_android, 
             }):
@@ -424,7 +424,7 @@ def main(args):
 
     # Build automatic benchmarks
     with build.options(source_dir="bench", extra_include_dirs=["bench", "test"], macros=macros, deps={
-            (build, build.deps.pthreadpool, build.deps.cpuinfo, build.deps.clog, build.deps.fp16, build.deps.googlebenchmark): all, 
+            (build, build.deps.cpuinfo, build.deps.clog, build.deps.fp16, build.deps.googlebenchmark): all, 
              "rt": build.target.is_linux, 
              "log": build.target.is_android}): 
 
