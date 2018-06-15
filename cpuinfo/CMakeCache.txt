@@ -18,7 +18,7 @@
 BENCHMARK_BUILD_32_BITS:BOOL=OFF
 
 //Enable the use of exceptions in the benchmark library.
-BENCHMARK_ENABLE_EXCEPTIONS:BOOL=ON
+BENCHMARK_ENABLE_EXCEPTIONS:BOOL=OFF
 
 //Enable link time optimisation of the benchmark library.
 BENCHMARK_ENABLE_LTO:BOOL=OFF
@@ -27,7 +27,7 @@ BENCHMARK_ENABLE_LTO:BOOL=OFF
 BENCHMARK_ENABLE_TESTING:BOOL=OFF
 
 //Build and test using libc++ as the standard library.
-BENCHMARK_USE_LIBCXX:BOOL=ON
+BENCHMARK_USE_LIBCXX:BOOL=OFF
 
 //Builds the googlemock subproject
 BUILD_GMOCK:BOOL=ON
@@ -42,7 +42,7 @@ BUILD_SHARED_LIBS:BOOL=OFF
 CLOG_BUILD_TESTS:BOOL=OFF
 
 //Log errors, warnings, and information to stdout/stderr
-CLOG_LOG_TO_STDIO:BOOL=OFF
+CLOG_LOG_TO_STDIO:BOOL=ON
 
 CLOG_RUNTIME_TYPE:STRING=static
 
@@ -360,7 +360,7 @@ gtest_disable_pthreads:BOOL=OFF
 
 //Use shared (DLL) run-time lib even when Google Test is built
 // as static lib.
-gtest_force_shared_crt:BOOL=ON
+gtest_force_shared_crt:BOOL=OFF
 
 //Build gtest with internal symbols hidden in shared libraries.
 gtest_hide_internal_symbols:BOOL=OFF
