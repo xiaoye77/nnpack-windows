@@ -66,9 +66,7 @@ Results of the unit tests:
   * all passed
 
 The only c-interface difference beween this port and NNPACK is the omission of the pthreadpool parameter. I use a stardard c++ threadpool implementation in non-Windows environments and the Microsoft Concurrency Runtime under Windows instead.
-The AVX2 FT16x16 kernels are currently not usable under Windows and are bypassed with the psimd FT16x16 kernels. This is because the PeachPy generated AVX2 FT16x16 kernels didn't pass the unit tests.
-This only affects the Windows build. Under Linux/Mac OS/Android/iOS all kernels are passing the unit tests without having to bypass some kernels. The psimd and scalar backend are also fully Windows compatible. 
-You always can change the default AVX2 backend and exclude the files from the x86_64-fma folder from building and include the files from for example the psimd folder if you want a psimd build instead.
+The AVX2 FT16x16 kernels are sadly currently not usable under Windows and are bypassed with the psimd FT16x16 kernels. This is because the PeachPy generated AVX2 FT16x16 kernels didn't pass the unit tests. This only affects the Windows build. Under Linux/Mac OS/Android/iOS all kernels are passing the unit tests without having to bypass some kernels. The psimd and scalar backend are also fully Windows compatible. You always can change the default AVX2 backend and exclude the files from the x86_64-fma folder from building and include the files from for example the psimd folder if you want a psimd build instead.
 Here are the steps if you want a non-Windows build like linux for example:
 ```bash
 sudo apt-get install ninja-build
