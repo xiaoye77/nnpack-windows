@@ -36,6 +36,7 @@ adb push build/android/armeabi-v7a/huawei-mate-9-test /data/local/tmp/huawei-mat
 adb push build/android/armeabi-v7a/huawei-mate-10-test /data/local/tmp/huawei-mate-10-test
 adb push build/android/armeabi-v7a/huawei-p8-lite-test /data/local/tmp/huawei-p8-lite-test
 adb push build/android/armeabi-v7a/huawei-p9-lite-test /data/local/tmp/huawei-p9-lite-test
+adb push build/android/armeabi-v7a/huawei-p20-pro-test /data/local/tmp/huawei-p20-pro-test
 adb push build/android/armeabi-v7a/iconia-one-10-test /data/local/tmp/iconia-one-10-test
 adb push build/android/armeabi-v7a/lenovo-a6600-plus-test /data/local/tmp/lenovo-a6600-plus-test
 adb push build/android/armeabi-v7a/lenovo-vibe-x2-test /data/local/tmp/lenovo-vibe-x2-test
@@ -49,6 +50,7 @@ adb push build/android/armeabi-v7a/moto-g-gen1-test /data/local/tmp/moto-g-gen1-
 adb push build/android/armeabi-v7a/moto-g-gen2-test /data/local/tmp/moto-g-gen2-test
 adb push build/android/armeabi-v7a/moto-g-gen3-test /data/local/tmp/moto-g-gen3-test
 adb push build/android/armeabi-v7a/moto-g-gen4-test /data/local/tmp/moto-g-gen4-test
+adb push build/android/armeabi-v7a/moto-g-gen5-test /data/local/tmp/moto-g-gen5-test
 adb push build/android/armeabi-v7a/nexus-s-test /data/local/tmp/nexus-s-test
 adb push build/android/armeabi-v7a/nexus4-test /data/local/tmp/nexus4-test
 adb push build/android/armeabi-v7a/nexus5x-test /data/local/tmp/nexus5x-test
@@ -61,6 +63,7 @@ adb push build/android/armeabi-v7a/oneplus-5-test /data/local/tmp/oneplus-5-test
 adb push build/android/armeabi-v7a/oneplus-5t-test /data/local/tmp/oneplus-5t-test
 adb push build/android/armeabi-v7a/oppo-a37-test /data/local/tmp/oppo-a37-test
 adb push build/android/armeabi-v7a/oppo-r9-test /data/local/tmp/oppo-r9-test
+adb push build/android/armeabi-v7a/oppo-r15-test /data/local/tmp/oppo-r15-test
 adb push build/android/armeabi-v7a/padcod-10.1-test /data/local/tmp/padcod-10.1-test
 adb push build/android/armeabi-v7a/pixel-c-test /data/local/tmp/pixel-c-test
 adb push build/android/armeabi-v7a/pixel-xl-test /data/local/tmp/pixel-xl-test
@@ -107,6 +110,7 @@ adb shell "/data/local/tmp/huawei-mate-9-test --gtest_color=yes"
 adb shell "/data/local/tmp/huawei-mate-10-test --gtest_color=yes"
 adb shell "/data/local/tmp/huawei-p8-lite-test --gtest_color=yes"
 adb shell "/data/local/tmp/huawei-p9-lite-test --gtest_color=yes"
+adb shell "/data/local/tmp/huawei-p20-pro-test --gtest_color=yes"
 adb shell "/data/local/tmp/iconia-one-10-test --gtest_color=yes"
 adb shell "/data/local/tmp/lenovo-a6600-plus-test --gtest_color=yes"
 adb shell "/data/local/tmp/lenovo-vibe-x2-test --gtest_color=yes"
@@ -120,6 +124,7 @@ adb shell "/data/local/tmp/moto-g-gen1-test --gtest_color=yes"
 adb shell "/data/local/tmp/moto-g-gen2-test --gtest_color=yes"
 adb shell "/data/local/tmp/moto-g-gen3-test --gtest_color=yes"
 adb shell "/data/local/tmp/moto-g-gen4-test --gtest_color=yes"
+adb shell "/data/local/tmp/moto-g-gen5-test --gtest_color=yes"
 adb shell "/data/local/tmp/nexus-s-test --gtest_color=yes"
 adb shell "/data/local/tmp/nexus4-test --gtest_color=yes"
 adb shell "/data/local/tmp/nexus5x-test --gtest_color=yes"
@@ -132,6 +137,7 @@ adb shell "/data/local/tmp/oneplus-5-test --gtest_color=yes"
 adb shell "/data/local/tmp/oneplus-5t-test --gtest_color=yes"
 adb shell "/data/local/tmp/oppo-a37-test --gtest_color=yes"
 adb shell "/data/local/tmp/oppo-r9-test --gtest_color=yes"
+adb shell "/data/local/tmp/oppo-r15-test --gtest_color=yes"
 adb shell "/data/local/tmp/padcod-10.1-test --gtest_color=yes"
 adb shell "/data/local/tmp/pixel-c-test --gtest_color=yes"
 adb shell "/data/local/tmp/pixel-xl-test --gtest_color=yes"

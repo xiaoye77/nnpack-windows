@@ -17,6 +17,7 @@ adb push build/android/arm64-v8a/huawei-mate-9-test /data/local/tmp/huawei-mate-
 adb push build/android/arm64-v8a/huawei-mate-10-test /data/local/tmp/huawei-mate-10-test
 adb push build/android/arm64-v8a/huawei-p8-lite-test /data/local/tmp/huawei-p8-lite-test
 adb push build/android/arm64-v8a/huawei-p9-lite-test /data/local/tmp/huawei-p9-lite-test
+adb push build/android/arm64-v8a/huawei-p20-pro-test /data/local/tmp/huawei-p20-pro-test
 adb push build/android/arm64-v8a/iconia-one-10-test /data/local/tmp/iconia-one-10-test
 adb push build/android/arm64-v8a/meizu-pro-6-test /data/local/tmp/meizu-pro-6-test
 adb push build/android/arm64-v8a/meizu-pro-6s-test /data/local/tmp/meizu-pro-6s-test
@@ -29,6 +30,7 @@ adb push build/android/arm64-v8a/oneplus-5-test /data/local/tmp/oneplus-5-test
 adb push build/android/arm64-v8a/oneplus-5t-test /data/local/tmp/oneplus-5t-test
 adb push build/android/arm64-v8a/oppo-a37-test /data/local/tmp/oppo-a37-test
 adb push build/android/arm64-v8a/oppo-r9-test /data/local/tmp/oppo-r9-test
+adb push build/android/arm64-v8a/oppo-r15-test /data/local/tmp/oppo-r15-test
 adb push build/android/arm64-v8a/pixel-c-test /data/local/tmp/pixel-c-test
 adb push build/android/arm64-v8a/pixel-xl-test /data/local/tmp/pixel-xl-test
 adb push build/android/arm64-v8a/pixel-test /data/local/tmp/pixel-test
@@ -53,6 +55,7 @@ adb shell "/data/local/tmp/huawei-mate-9-test --gtest_color=yes"
 adb shell "/data/local/tmp/huawei-mate-10-test --gtest_color=yes"
 adb shell "/data/local/tmp/huawei-p8-lite-test --gtest_color=yes"
 adb shell "/data/local/tmp/huawei-p9-lite-test --gtest_color=yes"
+adb shell "/data/local/tmp/huawei-p20-pro-test --gtest_color=yes"
 adb shell "/data/local/tmp/iconia-one-10-test --gtest_color=yes"
 adb shell "/data/local/tmp/meizu-pro-6-test --gtest_color=yes"
 adb shell "/data/local/tmp/meizu-pro-6s-test --gtest_color=yes"
@@ -65,6 +68,7 @@ adb shell "/data/local/tmp/oneplus-5-test --gtest_color=yes"
 adb shell "/data/local/tmp/oneplus-5t-test --gtest_color=yes"
 adb shell "/data/local/tmp/oppo-a37-test --gtest_color=yes"
 adb shell "/data/local/tmp/oppo-r9-test --gtest_color=yes"
+adb shell "/data/local/tmp/oppo-r15-test --gtest_color=yes"
 adb shell "/data/local/tmp/pixel-c-test --gtest_color=yes"
 adb shell "/data/local/tmp/pixel-xl-test --gtest_color=yes"
 adb shell "/data/local/tmp/pixel-test --gtest_color=yes"

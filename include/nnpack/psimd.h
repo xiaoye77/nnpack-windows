@@ -40,9 +40,38 @@ typedef Vec4f   psimd_f32;
 #define PSIMD_INTRINSIC static
 #endif
 
-#if defined(__ARM_NEON__)
+#if defined(__GNUC__)
+#if defined(__ARM_NEON__) || defined(__ARM_NEON)
 #include <arm_neon.h>
 #endif
+
+#if defined(__SSE2__)
+#include <emmintrin.h>
+#endif
+
+#if defined(__SSE3__)
+#include <pmmintrin.h>
+#endif
+
+#if defined(__SSSE3__)
+#include <tmmintrin.h>
+#endif
+
+#if defined(__SSE4_1__)
+#include <smmintrin.h>
+#endif
+
+#if defined(__SSE4_2__)
+#include <nmmintrin.h>
+#endif
+
+#if defined(__AVX__)
+#include <immintrin.h>
+#endif
+#elif defined(_MSC_VER)
+#include <intrin.h>
+#endif
+
 
 #if defined(__cplusplus)
 #define PSIMD_CXX_SYNTAX
