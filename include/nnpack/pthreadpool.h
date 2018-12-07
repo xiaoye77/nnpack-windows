@@ -46,6 +46,19 @@ struct compute_2d_tiled_context {
 	const size_t tile_j;
 };
 
+struct compute_3d_tiled_context {
+	pthreadpool_function_3d_tiled_t function;
+	void* argument;
+	struct fxdiv_divisor_size_t tile_range_j;
+	struct fxdiv_divisor_size_t tile_range_k;
+	size_t range_i;
+	size_t range_j;
+	size_t range_k;
+	size_t tile_i;
+	size_t tile_j;
+	size_t tile_k;
+};
+
 void pthreadpool_compute_1d(
 	pthreadpool_function_1d_t function,
 	void* argument,
@@ -79,17 +92,7 @@ void pthreadpool_compute_3d_tiled(
 	const size_t range_k,
 	const size_t tile_i,
 	const size_t tile_j,
-	const size_t tile_k)
-{
-	for (size_t i = 0; i < range_i; i += tile_i) {
-		for (size_t j = 0; j < range_j; j += tile_j) {
-			for (size_t k = 0; k < range_k; k += tile_k) {
-				function(argument, i, j, k,
-					min(range_i - i, tile_i), min(range_j - j, tile_j), min(range_k - k, tile_k));
-			}
-		}
-	}
-}
+	const size_t tile_k);
 
 void pthreadpool_compute_4d_tiled(
 	pthreadpool_function_4d_tiled_t function,
@@ -101,19 +104,8 @@ void pthreadpool_compute_4d_tiled(
 	const size_t tile_i,
 	const size_t tile_j,
 	const size_t tile_k,
-	const size_t tile_l)
-{
-	for (size_t i = 0; i < range_i; i += tile_i) {
-		for (size_t j = 0; j < range_j; j += tile_j) {
-			for (size_t k = 0; k < range_k; k += tile_k) {
-				for (size_t l = 0; l < range_l; l += tile_l) {
-					function(argument, i, j, k, l,
-						min(range_i - i, tile_i), min(range_j - j, tile_j), min(range_k - k, tile_k), min(range_l - l, tile_l));
-				}
-			}
-		}
-	}
-}
+	const size_t tile_l);
+
 #ifdef __cplusplus
 }
 #endif
