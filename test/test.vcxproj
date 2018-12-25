@@ -181,9 +181,6 @@
     <ClInclude Include="testers\winograd.h" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\googletest\googletest\msvc\2010\gtest.vcxproj">
-      <Project>{c8f6c172-56f2-4e76-b5fa-c3b423b31be7}</Project>
-    </ProjectReference>
     <ProjectReference Include="..\nnpack.vcxproj">
       <Project>{f65aa511-bc6e-4cca-a684-accdb72d4e83}</Project>
     </ProjectReference>
