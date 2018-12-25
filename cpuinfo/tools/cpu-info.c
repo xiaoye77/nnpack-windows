@@ -153,12 +153,18 @@ static const char* uarch_to_string(enum cpuinfo_uarch uarch) {
 			return "Cortex-A35";
 		case cpuinfo_uarch_cortex_a53:
 			return "Cortex-A53";
+		case cpuinfo_uarch_cortex_a55:
+			return "Cortex-A55";
 		case cpuinfo_uarch_cortex_a57:
 			return "Cortex-A57";
 		case cpuinfo_uarch_cortex_a72:
 			return "Cortex-A72";
 		case cpuinfo_uarch_cortex_a73:
 			return "Cortex-A73";
+		case cpuinfo_uarch_cortex_a75:
+			return "Cortex-A75";
+		case cpuinfo_uarch_cortex_a76:
+			return "Cortex-A76";
 		case cpuinfo_uarch_scorpion:
 			return "Scorpion";
 		case cpuinfo_uarch_krait:
@@ -173,6 +179,8 @@ static const char* uarch_to_string(enum cpuinfo_uarch uarch) {
 			return "Denver";
 		case cpuinfo_uarch_denver2:
 			return "Denver 2";
+		case cpuinfo_uarch_carmel:
+			return "Carmel";
 		case cpuinfo_uarch_mongoose_m1:
 			return "Mongoose M1";
 		case cpuinfo_uarch_mongoose_m2:
@@ -213,7 +221,6 @@ int main(int argc, char** argv) {
 	}
 	#ifdef __ANDROID__
 		printf("SoC name: %s\n", cpuinfo_get_package(0)->name);
-		printf("GPU name: %s\n", cpuinfo_get_package(0)->gpu_name);
 	#else
 		printf("Packages:\n");
 		for (uint32_t i = 0; i < cpuinfo_get_packages_count(); i++) {

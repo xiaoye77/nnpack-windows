@@ -6,10 +6,9 @@
 #include <cpuinfo.h>
 #include <x86/api.h>
 #include <x86/linux/api.h>
-#include <gpu/api.h>
 #include <linux/api.h>
-#include <api.h>
-#include <log.h>
+#include <cpuinfo/internal-api.h>
+#include <cpuinfo/log.h>
 
 
 static inline uint32_t bit_mask(uint32_t bits) {
@@ -33,8 +32,8 @@ static int cmp_x86_linux_processor(const void* ptr_a, const void* ptr_b) {
 	const struct cpuinfo_x86_linux_processor* processor_b = (const struct cpuinfo_x86_linux_processor*) ptr_b;
 
 	/* Move usable processors towards the start of the array */
-	const bool usable_a = bitmask_all(processor_a->flags, CPUINFO_LINUX_MASK_USABLE);
-	const bool usable_b = bitmask_all(processor_b->flags, CPUINFO_LINUX_MASK_USABLE);
+	const bool usable_a = bitmask_all(processor_a->flags, CPUINFO_LINUX_FLAG_VALID);
+	const bool usable_b = bitmask_all(processor_b->flags, CPUINFO_LINUX_FLAG_VALID);
 	if (usable_a != usable_b) {
 		return (int) usable_b - (int) usable_a;
 	}
@@ -49,6 +48,7 @@ static void cpuinfo_x86_count_objects(
 	uint32_t linux_processors_count,
 	const struct cpuinfo_x86_linux_processor linux_processors[restrict static linux_processors_count],
 	const struct cpuinfo_x86_processor processor[restrict static 1],
+	uint32_t valid_processor_mask,
 	uint32_t llc_apic_bits,
 	uint32_t cores_count_ptr[restrict static 1],
 	uint32_t clusters_count_ptr[restrict static 1],
@@ -72,7 +72,7 @@ static void cpuinfo_x86_count_objects(
 	uint32_t last_l1i_id = UINT32_MAX, last_l1d_id = UINT32_MAX;
 	uint32_t last_l2_id = UINT32_MAX, last_l3_id = UINT32_MAX, last_l4_id = UINT32_MAX;
 	for (uint32_t i = 0; i < linux_processors_count; i++) {
-		if (bitmask_all(linux_processors[i].flags, CPUINFO_LINUX_MASK_USABLE)) {
+		if (bitmask_all(linux_processors[i].flags, valid_processor_mask)) {
 			const uint32_t apic_id = linux_processors[i].apic_id;
 			cpuinfo_log_debug("APID ID %"PRIu32": system processor %"PRIu32, apic_id, linux_processors[i].linux_id);
 
@@ -165,7 +165,19 @@ void cpuinfo_x86_linux_init(void) {
 		cpuinfo_linux_get_max_present_processor(max_processors_count);
 	cpuinfo_log_debug("maximum present processors count: %"PRIu32, max_present_processors_count);
 
-	const uint32_t x86_linux_processors_count = min(max_possible_processors_count, max_present_processors_count);
+	uint32_t valid_processor_mask = 0;
+	uint32_t x86_linux_processors_count = max_processors_count;
+	if (max_present_processors_count != 0) {
+		x86_linux_processors_count = min(x86_linux_processors_count, max_present_processors_count);
+		valid_processor_mask = CPUINFO_LINUX_FLAG_PRESENT;
+	} else {
+		valid_processor_mask = CPUINFO_LINUX_FLAG_PROC_CPUINFO;
+	}
+	if (max_possible_processors_count != 0) {
+		x86_linux_processors_count = min(x86_linux_processors_count, max_possible_processors_count);
+		valid_processor_mask |= CPUINFO_LINUX_FLAG_POSSIBLE;
+	}
+
 	x86_linux_processors = calloc(x86_linux_processors_count, sizeof(struct cpuinfo_x86_linux_processor));
 	if (x86_linux_processors == NULL) {
 		cpuinfo_log_error(
@@ -175,19 +187,29 @@ void cpuinfo_x86_linux_init(void) {
 		return;
 	}
 
-	cpuinfo_linux_detect_possible_processors(
-		x86_linux_processors_count, &x86_linux_processors->flags,
-		sizeof(struct cpuinfo_x86_linux_processor),
-		CPUINFO_LINUX_FLAG_POSSIBLE);
+	if (max_possible_processors_count != 0) {
+		cpuinfo_linux_detect_possible_processors(
+			x86_linux_processors_count, &x86_linux_processors->flags,
+			sizeof(struct cpuinfo_x86_linux_processor),
+			CPUINFO_LINUX_FLAG_POSSIBLE);
+	}
 
-	cpuinfo_linux_detect_present_processors(
-		x86_linux_processors_count, &x86_linux_processors->flags,
-		sizeof(struct cpuinfo_x86_linux_processor),
-		CPUINFO_LINUX_FLAG_PRESENT);
+	if (max_present_processors_count != 0) {
+		cpuinfo_linux_detect_present_processors(
+			x86_linux_processors_count, &x86_linux_processors->flags,
+			sizeof(struct cpuinfo_x86_linux_processor),
+			CPUINFO_LINUX_FLAG_PRESENT);
+	}
 
 	if (!cpuinfo_x86_linux_parse_proc_cpuinfo(x86_linux_processors_count, x86_linux_processors)) {
 		cpuinfo_log_error("failed to parse processor information from /proc/cpuinfo");
 		return;
+	}
+
+	for (uint32_t i = 0; i < x86_linux_processors_count; i++) {
+		if (bitmask_all(x86_linux_processors[i].flags, valid_processor_mask)) {
+			x86_linux_processors[i].flags |= CPUINFO_LINUX_FLAG_VALID;
+		}
 	}
 
 	struct cpuinfo_x86_processor x86_processor;
@@ -198,7 +220,7 @@ void cpuinfo_x86_linux_init(void) {
 
 	uint32_t processors_count = 0;
 	for (uint32_t i = 0; i < x86_linux_processors_count; i++) {
-		if (bitmask_all(x86_linux_processors[i].flags, CPUINFO_LINUX_MASK_USABLE)) {
+		if (bitmask_all(x86_linux_processors[i].flags, CPUINFO_LINUX_FLAG_VALID)) {
 			x86_linux_processors[i].linux_id = i;
 			processors_count++;
 		}
@@ -226,7 +248,8 @@ void cpuinfo_x86_linux_init(void) {
 	}
 	uint32_t packages_count = 0, clusters_count = 0, cores_count = 0;
 	uint32_t l1i_count = 0, l1d_count = 0, l2_count = 0, l3_count = 0, l4_count = 0;
-	cpuinfo_x86_count_objects(x86_linux_processors_count, x86_linux_processors, &x86_processor, llc_apic_bits,
+	cpuinfo_x86_count_objects(
+		x86_linux_processors_count, x86_linux_processors, &x86_processor, valid_processor_mask, llc_apic_bits,
 		&cores_count, &clusters_count, &packages_count, &l1i_count, &l1d_count, &l2_count, &l3_count, &l4_count);
 
 	cpuinfo_log_debug("detected %"PRIu32" cores", cores_count);
@@ -330,7 +353,7 @@ void cpuinfo_x86_linux_init(void) {
 	uint32_t last_l1i_id = UINT32_MAX, last_l1d_id = UINT32_MAX;
 	uint32_t last_l2_id = UINT32_MAX, last_l3_id = UINT32_MAX, last_l4_id = UINT32_MAX;
 	for (uint32_t i = 0; i < x86_linux_processors_count; i++) {
-		if (bitmask_all(x86_linux_processors[i].flags, CPUINFO_LINUX_MASK_USABLE)) {
+		if (bitmask_all(x86_linux_processors[i].flags, CPUINFO_LINUX_FLAG_VALID)) {
 			const uint32_t apic_id = x86_linux_processors[i].apic_id;
 			processor_index++;
 			smt_id++;
@@ -544,14 +567,6 @@ void cpuinfo_x86_linux_init(void) {
 			}
 		}
 	}
-
-	#ifdef __ANDROID__
-		cpuinfo_gpu_query_gles2(packages[0].gpu_name);
-		struct cpuinfo_android_gpu gpu = cpuinfo_android_decode_gpu(packages[0].gpu_name);
-		if (gpu.series != cpuinfo_android_gpu_series_unknown) {
-			cpuinfo_android_gpu_to_string(&gpu, packages[0].gpu_name);
-		}
-	#endif
 
 	/* Commit changes */
 	cpuinfo_linux_cpu_to_processor_map = linux_cpu_to_processor_map;

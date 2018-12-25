@@ -2,7 +2,7 @@
 
 #include <arm/api.h>
 #include <arm/midr.h>
-#include <log.h>
+#include <cpuinfo/log.h>
 
 
 void cpuinfo_arm_decode_vendor_uarch(
@@ -165,11 +165,14 @@ void cpuinfo_arm_decode_vendor_uarch(
 				case 0x003:
 					*uarch = cpuinfo_uarch_denver2;
 					break;
+				case 0x004:
+					*uarch = cpuinfo_uarch_carmel;
+					break;
 				default:
 					cpuinfo_log_warning("unknown Nvidia CPU part 0x%03"PRIx32" ignored", midr_get_part(midr));
 			}
 			break;
-#if CPUINFO_ARCH_ARM64 && !defined(__ANDROID__)
+#if !defined(__ANDROID__)
 		case 'P':
 			*vendor = cpuinfo_vendor_apm;
 			switch (midr_get_part(midr)) {
@@ -238,6 +241,10 @@ void cpuinfo_arm_decode_vendor_uarch(
 				case 0x803: /* Low-power Kryo 385 "Silver" -> Cortex-A55 */
 					*vendor = cpuinfo_vendor_arm;
 					*uarch = cpuinfo_uarch_cortex_a55;
+					break;
+				case 0x804:
+					*vendor = cpuinfo_vendor_arm;
+					*uarch = cpuinfo_uarch_cortex_a76;
 					break;
 #if CPUINFO_ARCH_ARM64 && !defined(__ANDROID__)
 				case 0xC00:

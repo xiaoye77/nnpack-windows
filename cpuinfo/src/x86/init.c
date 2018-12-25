@@ -4,12 +4,13 @@
 #include <cpuinfo.h>
 #include <x86/cpuid.h>
 #include <x86/api.h>
-#include <utils.h>
-#include <log.h>
+#include <cpuinfo/utils.h>
+#include <cpuinfo/log.h>
+#include <cpuinfo/common.h>
 
 
 struct cpuinfo_x86_isa cpuinfo_isa = { 0 };
-uint32_t cpuinfo_x86_clflush_size = 0;
+CPUINFO_INTERNAL uint32_t cpuinfo_x86_clflush_size = 0;
 
 void cpuinfo_x86_init_processor(struct cpuinfo_x86_processor* processor) {
 	const struct cpuid_regs leaf0 = cpuid(0);

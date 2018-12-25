@@ -29,15 +29,17 @@ TEST(PROCESSORS, cluster) {
 		switch (i) {
 			case 0:
 			case 1:
+				ASSERT_EQ(cpuinfo_get_cluster(0), cpuinfo_get_processor(i)->cluster);
+				break;
 			case 2:
 			case 3:
-				ASSERT_EQ(cpuinfo_get_cluster(0), cpuinfo_get_processor(i)->cluster);
+				ASSERT_EQ(cpuinfo_get_cluster(1), cpuinfo_get_processor(i)->cluster);
 				break;
 			case 4:
 			case 5:
 			case 6:
 			case 7:
-				ASSERT_EQ(cpuinfo_get_cluster(1), cpuinfo_get_processor(i)->cluster);
+				ASSERT_EQ(cpuinfo_get_cluster(2), cpuinfo_get_processor(i)->cluster);
 				break;
 		}
 	}
@@ -54,9 +56,11 @@ TEST(PROCESSORS, linux_id) {
 		switch (i) {
 			case 0:
 			case 1:
+				ASSERT_EQ(i + 6, cpuinfo_get_processor(i)->linux_id);
+				break;
 			case 2:
 			case 3:
-				ASSERT_EQ(i + 4, cpuinfo_get_processor(i)->linux_id);
+				ASSERT_EQ(i + 2, cpuinfo_get_processor(i)->linux_id);
 				break;
 			case 4:
 			case 5:
@@ -82,26 +86,13 @@ TEST(PROCESSORS, l1d) {
 
 TEST(PROCESSORS, l2) {
 	for (uint32_t i = 0; i < cpuinfo_get_processors_count(); i++) {
-		switch (i) {
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-				ASSERT_EQ(cpuinfo_get_l2_cache(0), cpuinfo_get_processor(i)->cache.l2);
-				break;
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-				ASSERT_EQ(cpuinfo_get_l2_cache(1), cpuinfo_get_processor(i)->cache.l2);
-				break;
-		}
+		ASSERT_EQ(cpuinfo_get_l2_cache(i), cpuinfo_get_processor(i)->cache.l2);
 	}
 }
 
 TEST(PROCESSORS, l3) {
 	for (uint32_t i = 0; i < cpuinfo_get_processors_count(); i++) {
-		ASSERT_FALSE(cpuinfo_get_processor(i)->cache.l3);
+		ASSERT_EQ(cpuinfo_get_l3_cache(0), cpuinfo_get_processor(i)->cache.l3);
 	}
 }
 
@@ -142,15 +133,17 @@ TEST(CORES, cluster) {
 		switch (i) {
 			case 0:
 			case 1:
+				ASSERT_EQ(cpuinfo_get_cluster(0), cpuinfo_get_core(i)->cluster);
+				break;
 			case 2:
 			case 3:
-				ASSERT_EQ(cpuinfo_get_cluster(0), cpuinfo_get_core(i)->cluster);
+				ASSERT_EQ(cpuinfo_get_cluster(1), cpuinfo_get_core(i)->cluster);
 				break;
 			case 4:
 			case 5:
 			case 6:
 			case 7:
-				ASSERT_EQ(cpuinfo_get_cluster(1), cpuinfo_get_core(i)->cluster);
+				ASSERT_EQ(cpuinfo_get_cluster(2), cpuinfo_get_core(i)->cluster);
 				break;
 		}
 	}
@@ -175,13 +168,13 @@ TEST(CORES, uarch) {
 			case 1:
 			case 2:
 			case 3:
-				ASSERT_EQ(cpuinfo_uarch_cortex_a57, cpuinfo_get_core(i)->uarch);
+				ASSERT_EQ(cpuinfo_uarch_cortex_a76, cpuinfo_get_core(i)->uarch);
 				break;
 			case 4:
 			case 5:
 			case 6:
 			case 7:
-				ASSERT_EQ(cpuinfo_uarch_cortex_a53, cpuinfo_get_core(i)->uarch);
+				ASSERT_EQ(cpuinfo_uarch_cortex_a55, cpuinfo_get_core(i)->uarch);
 				break;
 		}
 	}
@@ -194,13 +187,13 @@ TEST(CORES, midr) {
 			case 1:
 			case 2:
 			case 3:
-				ASSERT_EQ(UINT32_C(0x411FD070), cpuinfo_get_core(i)->midr);
+				ASSERT_EQ(UINT32_C(0x481FD400), cpuinfo_get_core(i)->midr);
 				break;
 			case 4:
 			case 5:
 			case 6:
 			case 7:
-				ASSERT_EQ(UINT32_C(0x410FD032), cpuinfo_get_core(i)->midr);
+				ASSERT_EQ(UINT32_C(0x411FD050), cpuinfo_get_core(i)->midr);
 				break;
 		}
 	}
@@ -211,22 +204,24 @@ TEST(CORES, DISABLED_frequency) {
 		switch (i) {
 			case 0:
 			case 1:
+				ASSERT_EQ(UINT64_C(2600000000), cpuinfo_get_core(i)->frequency);
+				break;
 			case 2:
 			case 3:
-				ASSERT_EQ(UINT64_C(2100000000), cpuinfo_get_core(i)->frequency);
+				ASSERT_EQ(UINT64_C(1901000000), cpuinfo_get_core(i)->frequency);
 				break;
 			case 4:
 			case 5:
 			case 6:
 			case 7:
-				ASSERT_EQ(UINT64_C(1500000000), cpuinfo_get_core(i)->frequency);
+				ASSERT_EQ(UINT64_C(1805000000), cpuinfo_get_core(i)->frequency);
 				break;
 		}
 	}
 }
 
 TEST(CLUSTERS, count) {
-	ASSERT_EQ(2, cpuinfo_get_clusters_count());
+	ASSERT_EQ(3, cpuinfo_get_clusters_count());
 }
 
 TEST(CLUSTERS, non_null) {
@@ -240,6 +235,9 @@ TEST(CLUSTERS, processor_start) {
 				ASSERT_EQ(0, cpuinfo_get_cluster(i)->processor_start);
 				break;
 			case 1:
+				ASSERT_EQ(2, cpuinfo_get_cluster(i)->processor_start);
+				break;
+			case 2:
 				ASSERT_EQ(4, cpuinfo_get_cluster(i)->processor_start);
 				break;
 		}
@@ -248,7 +246,15 @@ TEST(CLUSTERS, processor_start) {
 
 TEST(CLUSTERS, processor_count) {
 	for (uint32_t i = 0; i < cpuinfo_get_clusters_count(); i++) {
-		ASSERT_EQ(4, cpuinfo_get_cluster(i)->processor_count);
+		switch (i) {
+			case 0:
+			case 1:
+				ASSERT_EQ(2, cpuinfo_get_cluster(i)->processor_count);
+				break;
+			case 2:
+				ASSERT_EQ(4, cpuinfo_get_cluster(i)->processor_count);
+				break;
+		}
 	}
 }
 
@@ -259,6 +265,9 @@ TEST(CLUSTERS, core_start) {
 				ASSERT_EQ(0, cpuinfo_get_cluster(i)->core_start);
 				break;
 			case 1:
+				ASSERT_EQ(2, cpuinfo_get_cluster(i)->core_start);
+				break;
+			case 2:
 				ASSERT_EQ(4, cpuinfo_get_cluster(i)->core_start);
 				break;
 		}
@@ -267,7 +276,15 @@ TEST(CLUSTERS, core_start) {
 
 TEST(CLUSTERS, core_count) {
 	for (uint32_t i = 0; i < cpuinfo_get_clusters_count(); i++) {
-		ASSERT_EQ(4, cpuinfo_get_cluster(i)->core_count);
+		switch (i) {
+			case 0:
+			case 1:
+				ASSERT_EQ(2, cpuinfo_get_cluster(i)->core_count);
+				break;
+			case 2:
+				ASSERT_EQ(4, cpuinfo_get_cluster(i)->core_count);
+				break;
+		}
 	}
 }
 
@@ -293,10 +310,13 @@ TEST(CLUSTERS, uarch) {
 	for (uint32_t i = 0; i < cpuinfo_get_clusters_count(); i++) {
 		switch (i) {
 			case 0:
-				ASSERT_EQ(cpuinfo_uarch_cortex_a57, cpuinfo_get_cluster(i)->uarch);
+				ASSERT_EQ(cpuinfo_uarch_cortex_a76, cpuinfo_get_cluster(i)->uarch);
 				break;
 			case 1:
-				ASSERT_EQ(cpuinfo_uarch_cortex_a53, cpuinfo_get_cluster(i)->uarch);
+				ASSERT_EQ(cpuinfo_uarch_cortex_a76, cpuinfo_get_cluster(i)->uarch);
+				break;
+			case 2:
+				ASSERT_EQ(cpuinfo_uarch_cortex_a55, cpuinfo_get_cluster(i)->uarch);
 				break;
 		}
 	}
@@ -306,10 +326,13 @@ TEST(CLUSTERS, midr) {
 	for (uint32_t i = 0; i < cpuinfo_get_clusters_count(); i++) {
 		switch (i) {
 			case 0:
-				ASSERT_EQ(UINT32_C(0x411FD070), cpuinfo_get_cluster(i)->midr);
+				ASSERT_EQ(UINT32_C(0x481FD400), cpuinfo_get_cluster(i)->midr);
 				break;
 			case 1:
-				ASSERT_EQ(UINT32_C(0x410FD032), cpuinfo_get_cluster(i)->midr);
+				ASSERT_EQ(UINT32_C(0x481FD400), cpuinfo_get_cluster(i)->midr);
+				break;
+			case 2:
+				ASSERT_EQ(UINT32_C(0x411FD050), cpuinfo_get_cluster(i)->midr);
 				break;
 		}
 	}
@@ -319,10 +342,13 @@ TEST(CLUSTERS, DISABLED_frequency) {
 	for (uint32_t i = 0; i < cpuinfo_get_clusters_count(); i++) {
 		switch (i) {
 			case 0:
-				ASSERT_EQ(UINT64_C(2100000000), cpuinfo_get_cluster(i)->frequency);
+				ASSERT_EQ(UINT64_C(2600000000), cpuinfo_get_core(i)->frequency);
 				break;
 			case 1:
-				ASSERT_EQ(UINT64_C(1500000000), cpuinfo_get_cluster(i)->frequency);
+				ASSERT_EQ(UINT64_C(1901000000), cpuinfo_get_core(i)->frequency);
+				break;
+			case 2:
+				ASSERT_EQ(UINT64_C(1805000000), cpuinfo_get_core(i)->frequency);
 				break;
 		}
 	}
@@ -334,7 +360,7 @@ TEST(PACKAGES, count) {
 
 TEST(PACKAGES, name) {
 	for (uint32_t i = 0; i < cpuinfo_get_packages_count(); i++) {
-		ASSERT_EQ("Samsung Exynos 7420",
+		ASSERT_EQ("HiSilicon Kirin 980",
 			std::string(cpuinfo_get_package(i)->name,
 				strnlen(cpuinfo_get_package(i)->name, CPUINFO_PACKAGE_NAME_MAX)));
 	}
@@ -372,7 +398,7 @@ TEST(PACKAGES, cluster_start) {
 
 TEST(PACKAGES, cluster_count) {
 	for (uint32_t i = 0; i < cpuinfo_get_packages_count(); i++) {
-		ASSERT_EQ(2, cpuinfo_get_package(i)->cluster_count);
+		ASSERT_EQ(3, cpuinfo_get_package(i)->cluster_count);
 	}
 }
 
@@ -485,23 +511,27 @@ TEST(ISA, neon_fma) {
 }
 
 TEST(ISA, atomics) {
-	ASSERT_FALSE(cpuinfo_has_arm_atomics());
+	#if CPUINFO_ARCH_ARM
+		ASSERT_FALSE(cpuinfo_has_arm_atomics());
+	#elif CPUINFO_ARCH_ARM64
+		ASSERT_TRUE(cpuinfo_has_arm_atomics());
+	#endif
 }
 
 TEST(ISA, neon_rdm) {
-	ASSERT_FALSE(cpuinfo_has_arm_neon_rdm());
+	ASSERT_TRUE(cpuinfo_has_arm_neon_rdm());
 }
 
 TEST(ISA, fp16_arith) {
-	ASSERT_FALSE(cpuinfo_has_arm_fp16_arith());
+	ASSERT_TRUE(cpuinfo_has_arm_fp16_arith());
 }
 
 TEST(ISA, neon_fp16_arith) {
-	ASSERT_FALSE(cpuinfo_has_arm_neon_fp16_arith());
+	ASSERT_TRUE(cpuinfo_has_arm_neon_fp16_arith());
 }
 
 TEST(ISA, neon_dot) {
-	ASSERT_FALSE(cpuinfo_has_arm_neon_dot());
+	ASSERT_TRUE(cpuinfo_has_arm_neon_dot());
 }
 
 TEST(ISA, jscvt) {
@@ -547,7 +577,7 @@ TEST(L1I, size) {
 			case 1:
 			case 2:
 			case 3:
-				ASSERT_EQ(48 * 1024, cpuinfo_get_l1i_cache(i)->size);
+				ASSERT_EQ(64 * 1024, cpuinfo_get_l1i_cache(i)->size);
 				break;
 			case 4:
 			case 5:
@@ -561,20 +591,7 @@ TEST(L1I, size) {
 
 TEST(L1I, associativity) {
 	for (uint32_t i = 0; i < cpuinfo_get_l1i_caches_count(); i++) {
-		switch (i) {
-			case 0:
-			case 1:
-			case 2:
-			case 3:
-				ASSERT_EQ(3, cpuinfo_get_l1i_cache(i)->associativity);
-				break;
-			case 4:
-			case 5:
-			case 6:
-			case 7:
-				ASSERT_EQ(2, cpuinfo_get_l1i_cache(i)->associativity);
-				break;
-		}
+		ASSERT_EQ(4, cpuinfo_get_l1i_cache(i)->associativity);
 	}
 }
 
@@ -620,26 +637,26 @@ TEST(L1D, non_null) {
 
 TEST(L1D, size) {
 	for (uint32_t i = 0; i < cpuinfo_get_l1d_caches_count(); i++) {
-		ASSERT_EQ(32 * 1024, cpuinfo_get_l1d_cache(i)->size);
-	}
-}
-
-TEST(L1D, associativity) {
-	for (uint32_t i = 0; i < cpuinfo_get_l1d_caches_count(); i++) {
 		switch (i) {
 			case 0:
 			case 1:
 			case 2:
 			case 3:
-				ASSERT_EQ(2, cpuinfo_get_l1d_cache(i)->associativity);
+				ASSERT_EQ(64 * 1024, cpuinfo_get_l1d_cache(i)->size);
 				break;
 			case 4:
 			case 5:
 			case 6:
 			case 7:
-				ASSERT_EQ(4, cpuinfo_get_l1d_cache(i)->associativity);
+				ASSERT_EQ(32 * 1024, cpuinfo_get_l1d_cache(i)->size);
 				break;
 		}
+	}
+}
+
+TEST(L1D, associativity) {
+	for (uint32_t i = 0; i < cpuinfo_get_l1d_caches_count(); i++) {
+		ASSERT_EQ(4, cpuinfo_get_l1d_cache(i)->associativity);
 	}
 }
 
@@ -676,7 +693,7 @@ TEST(L1D, processors) {
 }
 
 TEST(L2, count) {
-	ASSERT_EQ(2, cpuinfo_get_l2_caches_count());
+	ASSERT_EQ(8, cpuinfo_get_l2_caches_count());
 }
 
 TEST(L2, non_null) {
@@ -687,10 +704,16 @@ TEST(L2, size) {
 	for (uint32_t i = 0; i < cpuinfo_get_l2_caches_count(); i++) {
 		switch (i) {
 			case 0:
-				ASSERT_EQ(2 * 1024 * 1024, cpuinfo_get_l2_cache(i)->size);
-				break;
 			case 1:
-				ASSERT_EQ(256 * 1024, cpuinfo_get_l2_cache(i)->size);
+			case 2:
+			case 3:
+				ASSERT_EQ(512 * 1024, cpuinfo_get_l2_cache(i)->size);
+				break;
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+				ASSERT_EQ(128 * 1024, cpuinfo_get_l2_cache(i)->size);
 				break;
 		}
 	}
@@ -698,7 +721,20 @@ TEST(L2, size) {
 
 TEST(L2, associativity) {
 	for (uint32_t i = 0; i < cpuinfo_get_l2_caches_count(); i++) {
-		ASSERT_EQ(16, cpuinfo_get_l2_cache(i)->associativity);
+		switch (i) {
+			case 0:
+			case 1:
+			case 2:
+			case 3:
+				ASSERT_EQ(8, cpuinfo_get_l2_cache(i)->associativity);
+				break;
+			case 4:
+			case 5:
+			case 6:
+			case 7:
+				ASSERT_EQ(4, cpuinfo_get_l2_cache(i)->associativity);
+				break;
+		}
 	}
 }
 
@@ -725,9 +761,15 @@ TEST(L2, flags) {
 	for (uint32_t i = 0; i < cpuinfo_get_l2_caches_count(); i++) {
 		switch (i) {
 			case 0:
+			case 1:
+			case 2:
+			case 3:
 				ASSERT_EQ(CPUINFO_CACHE_INCLUSIVE, cpuinfo_get_l2_cache(i)->flags);
 				break;
-			case 1:
+			case 4:
+			case 5:
+			case 6:
+			case 7:
 				ASSERT_EQ(0, cpuinfo_get_l2_cache(i)->flags);
 				break;
 		}
@@ -736,22 +778,54 @@ TEST(L2, flags) {
 
 TEST(L2, processors) {
 	for (uint32_t i = 0; i < cpuinfo_get_l2_caches_count(); i++) {
-		switch (i) {
-			case 0:
-				ASSERT_EQ(0, cpuinfo_get_l2_cache(i)->processor_start);
-				ASSERT_EQ(4, cpuinfo_get_l2_cache(i)->processor_count);
-				break;
-			case 1:
-				ASSERT_EQ(4, cpuinfo_get_l2_cache(i)->processor_start);
-				ASSERT_EQ(4, cpuinfo_get_l2_cache(i)->processor_count);
-				break;
-		}
+		ASSERT_EQ(i, cpuinfo_get_l2_cache(i)->processor_start);
+		ASSERT_EQ(1, cpuinfo_get_l2_cache(i)->processor_count);
 	}
 }
 
-TEST(L3, none) {
-	ASSERT_EQ(0, cpuinfo_get_l3_caches_count());
-	ASSERT_FALSE(cpuinfo_get_l3_caches());
+TEST(L3, count) {
+	ASSERT_EQ(1, cpuinfo_get_l3_caches_count());
+}
+
+TEST(L3, non_null) {
+	ASSERT_TRUE(cpuinfo_get_l3_caches());
+}
+
+TEST(L3, size) {
+	for (uint32_t i = 0; i < cpuinfo_get_l3_caches_count(); i++) {
+		ASSERT_EQ(4 * 1024 * 1024, cpuinfo_get_l3_cache(i)->size);
+	}
+}
+
+TEST(L3, associativity) {
+	for (uint32_t i = 0; i < cpuinfo_get_l3_caches_count(); i++) {
+		ASSERT_EQ(16, cpuinfo_get_l3_cache(i)->associativity);
+	}
+}
+
+TEST(L3, sets) {
+	for (uint32_t i = 0; i < cpuinfo_get_l3_caches_count(); i++) {
+		ASSERT_EQ(cpuinfo_get_l3_cache(i)->size,
+			cpuinfo_get_l3_cache(i)->sets * cpuinfo_get_l3_cache(i)->line_size * cpuinfo_get_l3_cache(i)->partitions * cpuinfo_get_l3_cache(i)->associativity);
+	}
+}
+
+TEST(L3, partitions) {
+	for (uint32_t i = 0; i < cpuinfo_get_l3_caches_count(); i++) {
+		ASSERT_EQ(1, cpuinfo_get_l3_cache(i)->partitions);
+	}
+}
+
+TEST(L3, line_size) {
+	for (uint32_t i = 0; i < cpuinfo_get_l3_caches_count(); i++) {
+		ASSERT_EQ(64, cpuinfo_get_l3_cache(i)->line_size);
+	}
+}
+
+TEST(L3, flags) {
+	for (uint32_t i = 0; i < cpuinfo_get_l3_caches_count(); i++) {
+		ASSERT_EQ(0, cpuinfo_get_l3_cache(i)->flags);
+	}
 }
 
 TEST(L4, none) {
@@ -759,14 +833,14 @@ TEST(L4, none) {
 	ASSERT_FALSE(cpuinfo_get_l4_caches());
 }
 
-#include <galaxy-s6.h>
+#include <huawei-mate-20.h>
 
 int main(int argc, char* argv[]) {
 #if CPUINFO_ARCH_ARM
-	cpuinfo_set_hwcap(UINT32_C(0x0007B0D6));
+	cpuinfo_set_hwcap(UINT32_C(0x0037B0D6));
 	cpuinfo_set_hwcap2(UINT32_C(0x0000001F));
 #elif CPUINFO_ARCH_ARM64
-	cpuinfo_set_hwcap(UINT32_C(0x000000FB));
+	cpuinfo_set_hwcap(UINT32_C(0x000007FF));
 #endif
 	cpuinfo_mock_filesystem(filesystem);
 #ifdef __ANDROID__

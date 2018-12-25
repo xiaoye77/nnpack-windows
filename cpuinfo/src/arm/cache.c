@@ -1,7 +1,7 @@
 #include <stdint.h>
 
 #include <cpuinfo.h>
-#include <log.h>
+#include <cpuinfo/log.h>
 #include <arm/api.h>
 #include <arm/midr.h>
 
@@ -18,6 +18,7 @@ void cpuinfo_arm_decode_cache(
 	struct cpuinfo_cache l3[restrict static 1])
 {
 	switch (uarch) {
+#if CPUINFO_ARCH_ARM && !defined(__ARM_ARCH_7A__) && !defined(__ARM_ARCH_8A__)
 		case cpuinfo_uarch_xscale:
 			switch (midr_get_part(midr) >> 8) {
 				case 2:
@@ -87,6 +88,8 @@ void cpuinfo_arm_decode_cache(
 				.line_size = 32
 			};
 			break;
+#endif /* CPUINFO_ARCH_ARM && !defined(__ARM_ARCH_7A__) && !defined(__ARM_ARCH_8A__) */
+#if CPUINFO_ARCH_ARM && !defined(__ARM_ARCH_8A__)
 		case cpuinfo_uarch_cortex_a5:
 			/*
 			 * Cortex-A5 Technical Reference Manual:
@@ -410,6 +413,7 @@ void cpuinfo_arm_decode_cache(
 				.line_size = 64
 			};
 			break;
+#endif /* CPUINFO_ARCH_ARM && !defined(__ARM_ARCH_8A__) */
 		case cpuinfo_uarch_cortex_a35:
 			/*
 			 * ARM Cortex‑A35 Processor Technical Reference Manual:
@@ -686,10 +690,12 @@ void cpuinfo_arm_decode_cache(
 			 *  +--------------------+-------+-----------+-----------+-----------+----------+------------+
 			 *  | Snapdragon 845     | 4(+4) |    32K    |    32K    |    128K   |    2M    | [1], sysfs |
 			 *  | Exynos 9810        | 4(+4) |     ?     |     ?     |    None   |   512K   |     [2]    |
+			 *  | Kirin 980          | 4(+4) |    32K    |    32K    |    128K   |    4M    |     [3]    |
 			 *  +--------------------+-------+-----------+-----------+-----------+----------+------------+
 			 *
 			 * [1] https://www.anandtech.com/show/12114/qualcomm-announces-snapdragon-845-soc
 			 * [2] https://www.anandtech.com/show/12478/exynos-9810-handson-awkward-first-results
+			 * [3] https://en.wikichip.org/wiki/hisilicon/kirin/980
 			 */
 			if (midr_is_qualcomm_cortex_a55_silver(midr)) {
 				/* Qualcomm-modified Cortex-A55 in Snapdragon 710 / 845 */
@@ -708,22 +714,22 @@ void cpuinfo_arm_decode_cache(
 				*l1i = (struct cpuinfo_cache) {
 					.size = 32 * 1024,
 					.associativity = 4,
-					.line_size = 64
+					.line_size = 64,
 				};
 				*l1d = (struct cpuinfo_cache) {
 					.size = 32 * 1024,
 					.associativity = 4,
-					.line_size = 64
+					.line_size = 64,
 				};
 				*l2 = (struct cpuinfo_cache) {
 					.size = 128 * 1024,
 					.associativity = 4,
-					.line_size = 64
+					.line_size = 64,
 				};
 				*l3 = (struct cpuinfo_cache) {
 					.size = l3_size,
 					.associativity = 16,
-					.line_size = 64
+					.line_size = 64,
 				};
 			} else {
 				/* Standard Cortex-A55 */
@@ -731,18 +737,44 @@ void cpuinfo_arm_decode_cache(
 				*l1i = (struct cpuinfo_cache) {
 					.size = 32 * 1024,
 					.associativity = 4,
-					.line_size = 64
+					.line_size = 64,
 				};
 				*l1d = (struct cpuinfo_cache) {
 					.size = 32 * 1024,
 					.associativity = 4,
-					.line_size = 64
+					.line_size = 64,
 				};
-				*l2 = (struct cpuinfo_cache) {
-					.size = 512 * 1024,
-					.associativity = 16,
-					.line_size = 64
-				};
+				if (chipset->series == cpuinfo_arm_chipset_series_samsung_exynos) {
+					*l2 = (struct cpuinfo_cache) {
+						.size = 512 * 1024,
+						/* DynamIQ */
+						.associativity = 16,
+						.line_size = 64,
+					};
+				} else {
+					uint32_t l3_size = 1024 * 1024;
+					switch (chipset->series) {
+						case cpuinfo_arm_chipset_series_hisilicon_kirin:
+							/* Kirin 980: 4M L3 cache */
+							if (chipset->model == 980) {
+								l3_size = 4 * 1024 * 1024;
+							}
+							break;
+						default:
+							break;
+					}
+					*l2 = (struct cpuinfo_cache) {
+						.size = 128 * 1024,
+						.associativity = 4,
+						.line_size = 64,
+					};
+					*l3 = (struct cpuinfo_cache) {
+						.size = l3_size,
+						/* DynamIQ */
+						.associativity = 16,
+						.line_size = 64,
+					};
+				}
 			}
 			break;
 		case cpuinfo_uarch_cortex_a57:
@@ -1014,6 +1046,80 @@ void cpuinfo_arm_decode_cache(
 			};
 			break;
 		}
+		case cpuinfo_uarch_cortex_a76:
+		{
+			/*
+			 * ARM Cortex-A76 Core Technical Reference Manual
+			 * A6.1. About the L1 memory system
+			 *   The L1 memory system consists of separate instruction and data caches. Both have a fixed size of 64KB.
+			 *
+			 * A6.1.1 L1 instruction-side memory system
+			 *   The L1 instruction memory system has the following key features:
+			 *    - Virtually Indexed, Physically Tagged (VIPT), which behaves as a Physically Indexed,
+			 *      Physically Tagged (PIPT) 4-way set-associative L1 data cache.
+			 *    - Fixed cache line length of 64 bytes.
+			 *
+			 * A6.1.2 L1 data-side memory system
+			 *   The L1 data memory system has the following features:
+			 *    - Virtually Indexed, Physically Tagged (VIPT), which behaves as a Physically Indexed,
+			 *      Physically Tagged (PIPT) 4-way set-associative L1 data cache.
+			 *    - Fixed cache line length of 64 bytes.
+			 *    - Pseudo-LRU cache replacement policy.
+			 *
+			 * A7.1 About the L2 memory system
+			 *   The L2 memory subsystem consist of:
+			 *    - An 8-way set associative L2 cache with a configurable size of 128KB, 256KB or 512KB.
+			 *      Cache lines have a fixed length of 64 bytes.
+			 *    - Strictly inclusive with L1 data cache. Weakly inclusive with L1 instruction cache.
+			 *    - Dynamic biased replacement policy.
+			 *    - Modified Exclusive Shared Invalid (MESI) coherency.
+			 *
+			 *  +--------------------+-------+-----------+-----------+-----------+----------+------------+
+			 *  | Processor model    | Cores | L1D cache | L1I cache | L2 cache  | L3 cache | Reference  |
+			 *  +--------------------+-------+-----------+-----------+-----------+----------+------------+
+			 *  | Kirin 980          | 4(+4) |    64K    |    64K    |    512K   |    4M    |  [1], [2]  |
+			 *  +--------------------+-------+-----------+-----------+-----------+----------+------------+
+			 *
+			 * [1] https://www.anandtech.com/show/13298/hisilicon-announces-the-kirin-980-first-a76-g76-on-7nm
+			 * [2] https://en.wikichip.org/wiki/hisilicon/kirin/980
+			 */
+			uint32_t l2_size = 256 * 1024;
+			uint32_t l3_size = 1024 * 1024;
+			switch (chipset->series) {
+				case cpuinfo_arm_chipset_series_hisilicon_kirin:
+					/* Kirin 980: 512K L2 cache + 4M L3 cache */
+					if (chipset->model == 980) {
+						l2_size = 512 * 1024;
+						l3_size = 4 * 1024 * 1024;
+					}
+					break;
+				default:
+					break;
+			}
+			*l1i = (struct cpuinfo_cache) {
+				.size = 64 * 1024,
+				.associativity = 4,
+				.line_size = 64,
+			};
+			*l1d = (struct cpuinfo_cache) {
+				.size = 64 * 1024,
+				.associativity = 4,
+				.line_size = 64,
+			};
+			*l2 = (struct cpuinfo_cache) {
+				.size = l2_size,
+				.associativity = 8,
+				.line_size = 64,
+				.flags = CPUINFO_CACHE_INCLUSIVE,
+			};
+			*l3 = (struct cpuinfo_cache) {
+				.size = l3_size,
+				.associativity = 16,
+				.line_size = 64,
+			};
+			break;
+		}
+#if CPUINFO_ARCH_ARM && !defined(__ARM_ARCH_8A__)
 		case cpuinfo_uarch_scorpion:
 			/*
 			 * - "The CPU includes 32KB instruction and data caches as
@@ -1076,6 +1182,7 @@ void cpuinfo_arm_decode_cache(
 				.line_size = 128
 			};
 			break;
+#endif /* CPUINFO_ARCH_ARM && !defined(__ARM_ARCH_8A__) */
 		case cpuinfo_uarch_kryo:
 			/*
 			 *  +-----------------+-------+-----------+-----------+-----------+-----------+
@@ -1207,6 +1314,7 @@ void cpuinfo_arm_decode_cache(
 				.line_size = 64 /* assume DynamIQ cache */,
 			};
 			break;
+#if CPUINFO_ARCH_ARM64 && !defined(__ANDROID__)
 		case cpuinfo_uarch_thunderx:
 			/*
 			 * "78K-Icache and 32K-D cache per core, 16 MB shared L2 cache" [1]
@@ -1229,6 +1337,7 @@ void cpuinfo_arm_decode_cache(
 				.line_size = 64 /* assumption */
 			};
 			break;
+#endif
 		case cpuinfo_uarch_cortex_a12:
 		case cpuinfo_uarch_cortex_a32:
 		default:
