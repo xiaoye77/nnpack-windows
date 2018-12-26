@@ -101,12 +101,12 @@
 	}
 #endif
 
+#include <nnpack/pthreadpool.h>
+#include <nnpack/utils.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-#include <nnpack/pthreadpool.h>
-#include <nnpack/utils.h>
 
 //#ifdef NOMINMAX
 //	static inline const size_t min(const size_t a, const size_t b)
