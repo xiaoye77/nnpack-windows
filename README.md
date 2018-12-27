@@ -9,7 +9,7 @@ Open a Python command prompt with Administrator rights and type:
 pip install --upgrade git+https://github.com/Maratyszcza/PeachPy
 ```
   
-Now you're ready for building with Visual Studio 2017. I recommend to use the provided Visual Sudio 2017 solution when targeting Windows. NNPACK depends on cpuinfo wich is included in this repo but NOT in the provided solution. You must uses CMake to generate the
+Now you're ready for building with Visual Studio 2017. I recommend to use the provided Visual Sudio 2017 solution when targeting Windows. NNPACK depends on cpuinfo wich is included in this repo but NOT in the provided solution. You must use CMake to generate the
 Visual Studio project files and add it to your solution and link it with NNPACK. Don't use CMake for NNPACK itseft under Windows because it will not without some changes provide you with a functional library. This is because the library mix AVX2 code ans psimd under windows and not on other operating systems.
 
 
