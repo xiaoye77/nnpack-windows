@@ -10,7 +10,7 @@ pip install --upgrade git+https://github.com/Maratyszcza/PeachPy
 ```
   
 Now you're ready for building with Visual Studio 2017. I recommend to use the provided Visual Sudio 2017 solution when targeting Windows. NNPACK depends on cpuinfo wich is included in this repo but NOT in the provided solution. You must use CMake to generate the
-Visual Studio project files for cpuinfo and add it to te provided solution. Don't use CMake for nnpack-windows because under Windows the library has to mix AVX2 and psimd code together and not on other operating systems. The provided CMakeList.txt is in it current form not compatible for a correct Windows build and only recommended for non-Windows use.
+Visual Studio project files for cpuinfo and add it to the provided solution. Don't use CMake for nnpack-windows because under Windows the library has to mix AVX2 and psimd code together and not on other operating systems. The provided CMakeList.txt is in it current form not compatible for a correct Windows build and only recommended for non-Windows use.
 
 Results of the unit tests:
 
