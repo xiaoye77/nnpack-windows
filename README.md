@@ -10,7 +10,7 @@ pip install --upgrade git+https://github.com/Maratyszcza/PeachPy
 ```
   
 Now you're ready for building with Visual Studio 2017. I recommend to use the provided Visual Sudio 2017 solution when targeting Windows. NNPACK depends on cpuinfo wich is included in this repo but NOT in the provided solution. You must use CMake to generate the
-Visual Studio project files for cpuinfo and add it to the provided solution. Don't use CMake for nnpack-windows because under Windows the library has to mix AVX2 and psimd code together and not on other operating systems. The provided CMakeList.txt is in it current form not compatible for a correct Windows build and only recommended for non-Windows use.
+Visual Studio 2017 project files for cpuinfo and add it to the provided solution. Don't use CMake for nnpack-windows because under Windows the library has to mix AVX2 and psimd code together and not on other operating systems. The provided CMakeList.txt is in it current form not compatible for a correct Windows build and only recommended for non-Windows use.
 
 Results of the unit tests:
 
@@ -65,8 +65,7 @@ Results of the unit tests:
 
   * all passed
 
-The only c-interface difference beween this port and NNPACK is the omission of the pthreadpool parameter. I use a stardard c++ threadpool implementation in non-Windows environments and the Microsoft Concurrency Runtime under Windows instead.
-The AVX2 FT16x16 kernels are sadly currently not usable under Windows and are bypassed with the psimd FT16x16 kernels. This is because the PeachPy generated AVX2 FT16x16 kernels didn't pass the unit tests. Under Linux/Mac OS/Android/iOS all kernels are passing the unit tests without the need to bypass some kernels. The psimd and scalar backend are also fully Windows compatible. You always can change the default AVX2 backend and exclude the files from the x86_64-fma folder from building and include the files from for example the psimd folder if you want a psimd build instead.
+The only c-interface difference beween this port and NNPACK is the omission of the pthreadpool parameter. I use a stardard c++ threadpool implementation in non-Windows environments and OpenMP under Windows instead. You could easily use OpenMP under Linux with some minor modifcation. The AVX2 FT16x16 kernels are sadly currently not usable under Windows and are bypassed with the psimd FT16x16 kernels. This is because the PeachPy generated AVX2 FT16x16 kernels didn't pass the unit tests. Under Linux/Mac OS/Android/iOS all kernels are passing the unit tests without the need to bypass some kernels. The psimd and scalar backend are also fully Windows compatible. You always can change the default AVX2 backend and exclude the files from the x86_64-fma folder from building and include the files from for example the psimd folder if you want a psimd build instead.
 Here are the steps if you want a non-Windows build like linux for example:
 ```bash
 sudo apt-get install ninja-build
