@@ -1,5 +1,6 @@
 #if defined(_MSC_VER) && defined(__cplusplus)
-	#include <ppl.h>
+	//#include <ppl.h>
+	#include <omp.h>
 #else
 	#include <cassert>
 	#include <cstdio>
@@ -121,10 +122,18 @@ extern "C" {
 		const size_t range)
 	{
 #if defined(_MSC_VER) && defined(__cplusplus)
-		concurrency::parallel_for(0ull, range, [=](size_t i)
+		/*concurrency::parallel_for(0ull, range, [=](size_t i)
 		{
 			function(argument, i);
-		}, concurrency::static_partitioner());
+		}, concurrency::static_partitioner());*/
+
+		const long long end = (long long)range;
+		#pragma omp parallel num_threads(omp_get_max_threads())
+		{
+			#pragma omp for schedule(static,1)
+			for (long long i = 0ll; i < end; i++)
+				function(argument, i);
+		}
 #else
 		for_i(range, [=](size_t i)
 		{
