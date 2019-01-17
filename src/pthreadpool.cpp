@@ -1,5 +1,4 @@
 #if defined(_MSC_VER) && defined(__cplusplus)
-	//#include <ppl.h>
 	#include <omp.h>
 #else
 	#include <cassert>
@@ -109,24 +108,12 @@
 extern "C" {
 #endif
 
-//#ifdef NOMINMAX
-//	static inline const size_t min(const size_t a, const size_t b)
-//	{
-//		return a > b ? b : a;
-//	}
-//#endif // NOMINMAX
-
 	void pthreadpool_compute_1d(
 		pthreadpool_function_1d_t function,
 		void* argument,
 		const size_t range)
 	{
 #if defined(_MSC_VER) && defined(__cplusplus)
-		/*concurrency::parallel_for(0ull, range, [=](size_t i)
-		{
-			function(argument, i);
-		}, concurrency::static_partitioner());*/
-
 		const long long end = (long long)range;
 		#pragma omp parallel num_threads(omp_get_max_threads())
 		{
