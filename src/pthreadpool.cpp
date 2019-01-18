@@ -1,4 +1,4 @@
-#if defined(_MSC_VER) && defined(__cplusplus)
+#if defined(_MSC_VER)
 	#include <omp.h>
 #else
 	#include <cassert>
