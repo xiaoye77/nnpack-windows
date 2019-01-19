@@ -129,7 +129,9 @@ extern "C" {
 #endif
 	}
 
-	static void compute_1d_tiled(const struct compute_1d_tiled_context* context, const size_t linear_index)
+	static void compute_1d_tiled(
+		const struct compute_1d_tiled_context* context, 
+		const size_t linear_index)
 	{
 		const size_t tile_index = linear_index;
 		const size_t index = tile_index * context->tile;
@@ -157,7 +159,9 @@ extern "C" {
 		pthreadpool_compute_1d((pthreadpool_function_1d_t)compute_1d_tiled, &context, tile_range);
 	}
 
-	static void compute_2d(const struct compute_2d_context* context, const size_t linear_index)
+	static void compute_2d(
+		const struct compute_2d_context* context, 
+		const size_t linear_index)
 	{
 		const struct fxdiv_divisor_size_t range_j = context->range_j;
 		const struct fxdiv_result_size_t index = fxdiv_divide_size_t(linear_index, range_j);
@@ -181,7 +185,9 @@ extern "C" {
 		pthreadpool_compute_1d((pthreadpool_function_1d_t)compute_2d, &context, range_i * range_j);
 	}
 
-	static void compute_2d_tiled(const struct compute_2d_tiled_context* context, const size_t linear_index)
+	static void compute_2d_tiled(
+		const struct compute_2d_tiled_context* context,
+		const size_t linear_index)
 	{
 		const struct fxdiv_divisor_size_t tile_range_j = context->tile_range_j;
 		const struct fxdiv_result_size_t tile_index = fxdiv_divide_size_t(linear_index, tile_range_j);
@@ -220,7 +226,9 @@ extern "C" {
 		pthreadpool_compute_1d((pthreadpool_function_1d_t)compute_2d_tiled, &context, tile_range_i * tile_range_j);
 	}
 
-	static void compute_3d_tiled(const struct compute_3d_tiled_context* context, size_t linear_index) 
+	static void compute_3d_tiled(
+		const struct compute_3d_tiled_context* context, 
+		size_t linear_index) 
 	{
 		const struct fxdiv_divisor_size_t tile_range_k = context->tile_range_k;
 		const struct fxdiv_result_size_t tile_index_ij_k = fxdiv_divide_size_t(linear_index, tile_range_k);
@@ -287,7 +295,9 @@ extern "C" {
 		const size_t tile_l;
 	};
 
-	static void compute_4d_tiled(const struct compute_4d_tiled_context* context, size_t linear_index) 
+	static void compute_4d_tiled(
+		const struct compute_4d_tiled_context* context,
+		size_t linear_index) 
 	{
 		const struct fxdiv_divisor_size_t tile_range_kl = context->tile_range_kl;
 		const struct fxdiv_result_size_t tile_index_ij_kl = fxdiv_divide_size_t(linear_index, tile_range_kl);
