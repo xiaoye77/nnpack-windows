@@ -113,7 +113,7 @@ extern "C" {
 		void* argument,
 		const size_t range)
 	{
-#if defined(_MSC_VER) && defined(__cplusplus)
+#if defined(_MSC_VER)
 		const long long end = (long long)range;
 		#pragma omp parallel num_threads(omp_get_max_threads())
 		{
