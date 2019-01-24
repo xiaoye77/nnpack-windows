@@ -1,10 +1,19 @@
-
-
 # Ninja files
 build.ninja
 
+# Build objects and artifacts
+deps/
+build/
+build-*/
+bin/
+lib/
+out/
+obj/
+libs/
+*.pyc
+*.pyo
+
 # User-specific files
-/.vs/
 *.db
 *.opendb
 *.db-shm
@@ -23,22 +32,15 @@ build.ninja
 Config.make
 
 # Build results
-
 [Dd]ebug/
 [Rr]elease/
 x64/
-build/
 [Bb]in/
 [Oo]bj/
 .run-*
-lib/
-bin/
 Generated Files/
 buildinfo.h$$
 
-
-# Enable "build/" folder in the NuGet Packages folder since NuGet packages use it for MSBuild targets
-!packages/*/build/
 
 # MSTest test Results
 [Tt]est[Rr]esult*/
@@ -84,86 +86,12 @@ ipch/
 *.cachefile
 *.userosscache
 
-# Visual Studio profiler
-*.psess
-*.vsp
-*.vspx
-
-# Installshield output folder
-[Ee]xpress/
-
-# Click-Once directory
-publish/
-
-# Publish Web Output
-*.Publish.xml
-
-# NuGet Packages Directory
-## TODO: If you have NuGet Package Restore enabled, uncomment the next line
-#packages/
-
-# Windows Azure Build Output
-csx
-*.build.csdef
-
-# Windows Store app package directory
-AppPackages/
-
 # Others
-sql/
 *.Cache
 ClientBin/
-[Ss]tyle[Cc]op.*
 ~$*
 *~
 *.dbmdl
 *.[Pp]ublish.xml
 *.pfx
 *.publishsettings
-
-# RIA/Silverlight projects
-Generated_Code/
-
-# Backup & report files from converting an old project file to a newer
-# Visual Studio version. Backup files are not needed, because we have git ;-)
-_UpgradeReport_Files/
-Backup*/
-UpgradeLog*.XML
-UpgradeLog*.htm
-
-# SQL Server files
-App_Data/*.mdf
-App_Data/*.ldf
-
-
-#LightSwitch generated files
-GeneratedArtifacts/
-_Pvt_Extensions/
-ModelManifest.xml
-
-# Python
-*.pyc
-__pycache__/
-
-# =========================
-# Windows detritus
-# =========================
-
-# Windows image file caches
-Thumbs.db
-ehthumbs.db
-
-# Folder config file
-Desktop.ini
-
-# Recycle Bin used on file shares
-$RECYCLE.BIN/
-
-# Mac desktop service store files
-.DS_Store
-
-*.bak
-
-bin/
-LOG
-*.log
